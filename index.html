@@ -11,6 +11,8 @@
 			--blue-light: #e8f2fb;
 			--green: #2e7d32;
 			--green-light: #e8f5e9;
+			--gold: #f9a825;
+			--gold-light: #fffdf5;
 			--gray-100: #f5f5f5;
 			--gray-200: #eeeeee;
 			--gray-400: #bdbdbd;
@@ -32,7 +34,7 @@
 		header {
 			background: var(--blue);
 			color: white;
-			padding: 16px 20px;
+			padding: 14px 18px;
 			display: flex;
 			align-items: center;
 			gap: 12px;
@@ -43,18 +45,35 @@
 		}
 
 		header svg { flex-shrink: 0; }
+		header h1 { font-size: 1.1rem; font-weight: 600; line-height: 1.2; }
+		header small { font-size: .75rem; opacity: .8; display: block; }
+		.header-text { flex: 1; min-width: 0; }
 
-		header h1 {
-			font-size: 1.1rem;
-			font-weight: 600;
-			line-height: 1.2;
+		.lang-switcher {
+			display: flex;
+			gap: 2px;
+			background: rgba(255,255,255,.12);
+			border-radius: 6px;
+			padding: 2px;
+			flex-shrink: 0;
 		}
 
-		header small {
+		.lang-btn {
+			background: none;
+			color: white;
+			border: none;
+			padding: 4px 10px;
+			border-radius: 4px;
 			font-size: .75rem;
-			opacity: .8;
-			display: block;
+			font-weight: 700;
+			cursor: pointer;
+			font-family: inherit;
+			transition: background .15s;
+			opacity: .65;
 		}
+
+		.lang-btn:hover { opacity: 1; }
+		.lang-btn.active { background: rgba(255,255,255,.22); opacity: 1; }
 
 		.container {
 			max-width: 700px;
@@ -72,7 +91,36 @@
 			padding: 16px;
 		}
 
-		/* ── Location card ── */
+		/* ── Mode tabs ── */
+		.mode-tabs {
+			padding: 5px;
+			display: flex;
+			gap: 3px;
+		}
+
+		.mode-tab {
+			flex: 1;
+			padding: 9px 6px;
+			border: none;
+			background: none;
+			border-radius: 7px;
+			cursor: pointer;
+			font-size: .85rem;
+			font-weight: 600;
+			color: var(--gray-600);
+			transition: all .15s;
+			font-family: inherit;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 5px;
+		}
+
+		.mode-tab:hover { background: var(--gray-100); }
+		.mode-tab.active { background: var(--blue); color: white; }
+		.mode-tab.active:hover { background: var(--blue-dark); }
+
+		/* ── Location/Destination card ── */
 		.location-card {
 			display: flex;
 			flex-direction: column;
@@ -96,8 +144,10 @@
 			flex-shrink: 0;
 		}
 
-		.location-text { flex: 1; min-width: 0; }
+		.location-icon.dest { background: #fde4e4; }
+		.location-icon.dest svg { stroke: #c62828; }
 
+		.location-text { flex: 1; min-width: 0; }
 		.location-text strong {
 			display: block;
 			font-size: .9rem;
@@ -105,11 +155,7 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
-
-		.location-text small {
-			color: var(--gray-600);
-			font-size: .75rem;
-		}
+		.location-text small { color: var(--gray-600); font-size: .75rem; }
 
 		.btn-icon {
 			background: none;
@@ -159,6 +205,7 @@
 			cursor: pointer;
 			white-space: nowrap;
 			transition: background .15s;
+			font-family: inherit;
 		}
 
 		.address-search button:hover { background: var(--blue-dark); }
@@ -189,20 +236,57 @@
 			font-family: inherit;
 			color: var(--gray-800);
 			border-bottom: 1px solid var(--gray-200);
-			transition: background .1s;
 		}
 
 		.autocomplete-list button:last-child { border-bottom: none; }
 		.autocomplete-list button:hover { background: var(--blue-light); }
 
+		/* Saved places (chips) */
+		.saved-places {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+		}
+
+		.saved-places:empty { display: none; }
+
+		.place-chip {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			padding: 5px 10px;
+			border-radius: 14px;
+			border: 1.5px solid var(--gray-200);
+			background: white;
+			font-size: .78rem;
+			font-weight: 500;
+			cursor: pointer;
+			color: var(--gray-800);
+			font-family: inherit;
+			transition: all .15s;
+			-webkit-user-select: none;
+			user-select: none;
+			-webkit-tap-highlight-color: transparent;
+		}
+
+		.place-chip:hover { border-color: var(--blue); color: var(--blue); }
+		.place-chip:active { transform: scale(.96); }
+
+		.place-chip.add-chip {
+			color: var(--gray-600);
+			border-style: dashed;
+		}
+
+		.place-chip svg {
+			width: 12px;
+			height: 12px;
+			flex-shrink: 0;
+		}
+
 		/* ── Controls card ── */
 		.controls { display: flex; flex-direction: column; gap: 14px; }
 
-		.fuel-tabs {
-			display: flex;
-			gap: 6px;
-			flex-wrap: wrap;
-		}
+		.fuel-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 
 		.fuel-tab {
 			flex: 1;
@@ -221,24 +305,10 @@
 		}
 
 		.fuel-tab:hover { border-color: var(--blue); color: var(--blue); }
+		.fuel-tab.active { border-color: var(--blue); background: var(--blue); color: white; }
 
-		.fuel-tab.active {
-			border-color: var(--blue);
-			background: var(--blue);
-			color: white;
-		}
-
-		.radius-row {
-			display: flex;
-			align-items: center;
-			gap: 12px;
-		}
-
-		.radius-row label {
-			font-size: .85rem;
-			font-weight: 500;
-			white-space: nowrap;
-		}
+		.slider-row { display: flex; align-items: center; gap: 12px; }
+		.slider-row label { font-size: .85rem; font-weight: 500; white-space: nowrap; }
 
 		input[type="range"] {
 			flex: 1;
@@ -246,7 +316,7 @@
 			height: 4px;
 		}
 
-		.radius-value {
+		.slider-value {
 			font-size: .85rem;
 			font-weight: 700;
 			color: var(--blue);
@@ -267,6 +337,7 @@
 		.status.info { background: var(--blue-light); color: var(--blue-dark); }
 		.status.error { background: #fdecea; color: #b71c1c; }
 		.status.loading { background: var(--gray-100); color: var(--gray-600); }
+		.status.warn { background: #fff8e1; color: #8a6d3b; }
 
 		.spinner {
 			width: 20px;
@@ -286,42 +357,69 @@
 			align-items: center;
 			justify-content: space-between;
 			margin-bottom: 12px;
-		}
-
-		.results-header h2 {
-			font-size: .95rem;
-			font-weight: 600;
-			color: var(--gray-600);
-		}
-
-		.results-header span {
-			font-size: .8rem;
-			color: var(--gray-600);
-		}
-
-		.station-list {
-			display: flex;
-			flex-direction: column;
 			gap: 8px;
 		}
 
+		.results-header h2 { font-size: .95rem; font-weight: 600; color: var(--gray-600); }
+		.results-header span { font-size: .78rem; color: var(--gray-600); text-align: right; }
+
+		.station-list { display: flex; flex-direction: column; gap: 8px; }
+
 		.station-card {
 			display: grid;
-			grid-template-columns: 1fr auto;
+			grid-template-columns: auto 1fr auto auto;
 			grid-template-rows: auto auto;
-			gap: 2px 8px;
-			padding: 12px 14px;
+			gap: 2px 10px;
+			padding: 12px 10px 12px 10px;
 			border-radius: 8px;
 			border: 1.5px solid var(--gray-200);
 			background: white;
+			color: inherit;
+			text-decoration: none;
+			cursor: pointer;
+			transition: border-color .15s, transform .1s;
+			-webkit-tap-highlight-color: transparent;
+			position: relative;
 		}
 
-		.station-card:first-child {
+		.station-card:hover { border-color: var(--blue); }
+		.station-card:active { transform: scale(.99); }
+
+		.station-card.is-best {
 			border-color: var(--green);
 			background: var(--green-light);
 		}
 
-		.station-card:first-child .station-price { color: var(--green); }
+		.station-card.is-best:hover { border-color: var(--green); }
+		.station-card.is-best .station-price { color: var(--green); }
+		.station-card.is-best .dir-arrow { color: var(--green); }
+		.station-card.is-best .brand-chip { background: rgba(0,0,0,.12); }
+		.station-card.is-best .price-pill .label { color: rgba(0,0,0,.55); }
+		.station-card.is-best .price-pill .amount { color: var(--green); }
+
+		.fav-btn {
+			grid-column: 1;
+			grid-row: 1 / 3;
+			align-self: center;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 34px;
+			height: 34px;
+			border-radius: 50%;
+			color: var(--gray-400);
+			cursor: pointer;
+			transition: color .15s, background .15s;
+			flex-shrink: 0;
+		}
+
+		.fav-btn:hover { background: rgba(0,0,0,.08); }
+		.fav-btn.active { color: var(--gold); }
+
+		.station-card.is-fav:not(.is-best) {
+			border-color: #f9d56b;
+			background: var(--gold-light);
+		}
 
 		.station-name {
 			font-size: .88rem;
@@ -329,12 +427,14 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			grid-column: 2;
 		}
 
 		.station-price {
 			font-size: 1.25rem;
 			font-weight: 800;
 			color: var(--blue);
+			grid-column: 3;
 			grid-row: 1 / 3;
 			align-self: center;
 			text-align: right;
@@ -347,7 +447,19 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			grid-column: 2;
 		}
+
+		.dir-arrow {
+			grid-column: 4;
+			grid-row: 1 / 3;
+			align-self: center;
+			color: var(--gray-400);
+			display: flex;
+			align-items: center;
+		}
+
+		.station-card:hover .dir-arrow { color: var(--blue); }
 
 		.brand-chip {
 			display: inline-block;
@@ -360,7 +472,20 @@
 			vertical-align: middle;
 		}
 
-		.station-card:first-child .brand-chip { background: rgba(0,0,0,.12); }
+		.badge {
+			font-size: .65rem;
+			color: var(--gray-600);
+			background: var(--gray-200);
+			border-radius: 3px;
+			padding: 1px 5px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: .3px;
+			margin-left: 4px;
+			vertical-align: middle;
+		}
+
+		.badge.oor { background: #fde4e4; color: #c62828; }
 
 		.freshness {
 			text-align: center;
@@ -369,11 +494,10 @@
 			padding-top: 4px;
 		}
 
-		/* "Tous" multi-price layout */
 		.prices-row {
 			display: flex;
 			gap: 6px;
-			grid-column: 2;
+			grid-column: 3;
 			grid-row: 1 / 3;
 			align-items: center;
 		}
@@ -404,11 +528,12 @@
 			font-weight: 400;
 		}
 
-		.station-card:first-child .price-pill .label { color: rgba(0,0,0,.55); }
-		.station-card:first-child .price-pill .amount { color: var(--green); }
+		.hidden { display: none !important; }
 
-		@media (max-width: 400px) {
-			.fuel-tab { font-size: .75rem; }
+		@media (max-width: 420px) {
+			.fuel-tab { font-size: .75rem; min-width: 68px; }
+			.mode-tab { font-size: .78rem; padding: 8px 4px; }
+			.mode-tab svg { display: none; }
 		}
 	</style>
 </head>
@@ -421,16 +546,36 @@
 		<rect x="12" y="11" width="8" height="4" rx="1" fill="#095797"/>
 		<circle cx="22" cy="12" r="1.5" fill="#f9a825"/>
 	</svg>
-	<div>
-		<h1>Prix essence — Québec</h1>
-		<small>Données : Régie de l'énergie</small>
+	<div class="header-text">
+		<h1 data-i18n="appTitle">Prix essence — Québec</h1>
+		<small data-i18n="appSubtitle">Données : Régie de l'énergie</small>
+	</div>
+	<div class="lang-switcher">
+		<button class="lang-btn active" data-lang="fr">FR</button>
+		<button class="lang-btn" data-lang="en">EN</button>
 	</div>
 </header>
 
 <div class="container">
 
-	<!-- Location card -->
-	<div class="card location-card">
+	<!-- Mode tabs: Favoris / Autour de moi / En route -->
+	<div class="card mode-tabs">
+		<button class="mode-tab" data-mode="fav">
+			<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+			<span data-i18n="modeFav">Favoris</span>
+		</button>
+		<button class="mode-tab active" data-mode="nearby">
+			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9" stroke-dasharray="3 3"/></svg>
+			<span data-i18n="modeNearby">Autour de moi</span>
+		</button>
+		<button class="mode-tab" data-mode="trip">
+			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+			<span data-i18n="modeTrip">En route</span>
+		</button>
+	</div>
+
+	<!-- Origin card -->
+	<div class="card location-card" id="originCard">
 		<div class="location-bar">
 			<div class="location-icon">
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#095797" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -439,10 +584,10 @@
 				</svg>
 			</div>
 			<div class="location-text">
-				<strong id="locationLabel">Localisation en cours…</strong>
-				<small id="locationSub">Autorisation requise</small>
+				<strong id="originLabel" data-i18n="locating">Localisation en cours…</strong>
+				<small id="originSub" data-i18n="authRequired">Autorisation requise</small>
 			</div>
-			<button class="btn-icon" id="gpsBtn" title="Utiliser le GPS" disabled>
+			<button class="btn-icon" id="gpsBtn" data-i18n-title="gpsBtnTitle" title="Utiliser le GPS" disabled>
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 					<circle cx="12" cy="12" r="3"/>
 					<path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
@@ -451,30 +596,54 @@
 			</button>
 		</div>
 
-		<!-- Address search fallback -->
-		<div class="address-search" id="addressSearchRow">
-			<input type="text" id="addressInput" placeholder="Entrez une adresse ou une ville…" autocomplete="off" spellcheck="false">
-			<button id="addressSearchBtn">Chercher</button>
-			<div class="autocomplete-list" id="autocompleteList" hidden></div>
+		<div class="address-search" id="originSearchRow">
+			<input type="text" id="originInput" data-i18n-placeholder="originPlaceholder" placeholder="Adresse ou ville de départ…" autocomplete="off" spellcheck="false">
+			<button id="originSearchBtn" data-i18n="searchBtn">Chercher</button>
+			<div class="autocomplete-list" id="originAutocomplete" hidden></div>
 		</div>
+
+		<div class="saved-places" id="originPlaces"></div>
+	</div>
+
+	<!-- Destination card (trip mode only) -->
+	<div class="card location-card hidden" id="destinationCard">
+		<div class="location-bar">
+			<div class="location-icon dest">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c62828" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+					<circle cx="12" cy="10" r="3"/>
+				</svg>
+			</div>
+			<div class="location-text">
+				<strong id="destLabel" data-i18n="destination">Destination</strong>
+				<small id="destSub" data-i18n="enterDestination">Entrez votre destination</small>
+			</div>
+		</div>
+
+		<div class="address-search" id="destSearchRow">
+			<input type="text" id="destInput" data-i18n-placeholder="destPlaceholder" placeholder="Adresse ou ville de destination…" autocomplete="off" spellcheck="false">
+			<button id="destSearchBtn" data-i18n="searchBtn">Chercher</button>
+			<div class="autocomplete-list" id="destAutocomplete" hidden></div>
+		</div>
+
+		<div class="saved-places" id="destPlaces"></div>
 	</div>
 
 	<!-- Controls card -->
-	<div class="card controls">
+	<div class="card controls" id="controlsCard">
 		<div class="fuel-tabs">
-			<button class="fuel-tab active" data-fuel="Régulier">Régulier</button>
-			<button class="fuel-tab" data-fuel="Super">Super</button>
-			<button class="fuel-tab" data-fuel="Diesel">Diesel</button>
-			<button class="fuel-tab" data-fuel="Tous">Tous</button>
+			<button class="fuel-tab active" data-fuel="Régulier" data-i18n="fuelRegular">Régulier</button>
+			<button class="fuel-tab" data-fuel="Super" data-i18n="fuelSuper">Super</button>
+			<button class="fuel-tab" data-fuel="Diesel" data-i18n="fuelDiesel">Diesel</button>
+			<button class="fuel-tab" data-fuel="Tous" data-i18n="fuelAll">Tous</button>
 		</div>
-		<div class="radius-row">
-			<label for="radiusSlider">Rayon :</label>
-			<input type="range" id="radiusSlider" min="1" max="25" value="10" step="1">
-			<span class="radius-value" id="radiusValue">10 km</span>
+		<div class="slider-row" id="sliderRow">
+			<label for="sliderMain" id="sliderLabel" data-i18n="radiusLabel">Rayon :</label>
+			<input type="range" id="sliderMain" min="1" max="25" value="10" step="1">
+			<span class="slider-value" id="sliderValue">10 km</span>
 		</div>
 	</div>
 
-	<!-- Status / Results -->
 	<div id="statusArea"></div>
 	<div id="resultsArea"></div>
 
@@ -484,23 +653,185 @@
 (function () {
 	'use strict';
 
+	// ── Config ──
 	const GEOJSON_URL = 'https://regieessencequebec.ca/stations.geojson.gz';
 	const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
-	const FUEL_LABELS = { 'Régulier': 'Rég.', 'Super': 'Super', 'Diesel': 'Dies.' };
+	const GOOGLE_MAPS_KEY = 'AIzaSyCh_XhWbEtbEfCx6oe_MPInqNlrA0BBiGI';
+	const FAV_STORAGE_KEY = 'gaz_favorites_v1';
+	const LANG_STORAGE_KEY = 'gaz_lang_v1';
+	const PLACES_STORAGE_KEY = 'gaz_places_v1';
+	const MAX_RADIUS_KM = 25;
+	const MAX_DETOUR_KM = 5;
+	const ROAD_BUFFER = 1.5;
+	const MAX_CANDIDATES = 100;
+	const MAX_RESULTS = 20;
+	const CACHE_THRESHOLD_KM = 0.1;
 
-	let userLat = null;
-	let userLon = null;
-	let locationLabel = null;
-	let stationsData = null;
-	let metadata = null;
+	// ── i18n ──
+	const i18n = {
+		fr: {
+			appTitle: 'Prix essence — Québec',
+			appSubtitle: 'Données : Régie de l\'énergie',
+			modeFav: 'Favoris',
+			modeNearby: 'Autour de moi',
+			modeTrip: 'En route',
+			locating: 'Localisation en cours…',
+			authRequired: 'Autorisation requise',
+			gpsInProgress: 'GPS en cours…',
+			allowGeolocation: 'Veuillez autoriser la géolocalisation.',
+			gpsUnavailable: 'GPS indisponible',
+			gpsDenied: 'GPS refusé — utilisez la recherche ci-dessous.',
+			gpsPosUnavailable: 'Position GPS indisponible — utilisez la recherche.',
+			gpsTimeout: 'Délai GPS dépassé — utilisez la recherche.',
+			gpsError: 'Erreur GPS.',
+			gpsNotAvailable: 'GPS non disponible',
+			useAddressSearch: 'Utilisez la recherche d\'adresse.',
+			originPlaceholder: 'Adresse ou ville de départ…',
+			destPlaceholder: 'Adresse ou ville de destination…',
+			searchBtn: 'Chercher',
+			gpsBtnTitle: 'Utiliser le GPS',
+			destination: 'Destination',
+			enterDestination: 'Entrez votre destination',
+			fuelRegular: 'Régulier',
+			fuelSuper: 'Super',
+			fuelDiesel: 'Diesel',
+			fuelAll: 'Tous',
+			radiusLabel: 'Rayon :',
+			detourLabel: 'Détour :',
+			loadingStations: 'Chargement des stations…',
+			computingRoads: 'Calcul des trajets routiers…',
+			computingRoute: 'Calcul de l\'itinéraire…',
+			loadError: 'Erreur de chargement : {msg}',
+			roadsUnavailable: 'Distances routières indisponibles ({msg}). Distance à vol d\'oiseau utilisée.',
+			routeError: 'Impossible de calculer l\'itinéraire : {msg}',
+			enterOD: 'Entrez un point de départ et une destination.',
+			noStationsNearby: 'Aucune station trouvée (rayon de {val} km).',
+			noStationsTrip: 'Aucune station trouvée (détour de {val} km).',
+			noFavs: 'Aucune station favorite. Ajoutez-en avec l\'étoile ⭐ sur les autres onglets.',
+			stationCount: '{n} station — {fuel}',
+			stationCountPlural: '{n} stations — {fuel}',
+			allTypes: 'Tous types',
+			oorNearby: 'hors rayon',
+			oorTrip: 'hors détour',
+			straightLine: 'vol d\'oiseau',
+			roadDistance: 'trajet routier',
+			updated: 'Mise à jour :',
+			detourPrefix: 'détour',
+			fromStart: 'du départ',
+			distanceUnknown: 'distance inconnue',
+			detourMaxLabel: 'détour ≤ {d} km · trajet {m}',
+			radiusMeta: '{r} km · {mode}',
+			favMetaWithDist: '{d}{dur}',
+			favMetaNoDist: 'favori',
+			addPlace: 'Ajouter',
+			savePlacePromptOrigin: 'Nom pour ce point de départ :',
+			savePlacePromptDest: 'Nom pour cette destination :',
+			confirmDeletePlace: 'Supprimer « {name} » ?',
+			noLocationSet: 'Définissez d\'abord une position.',
+			chipDeleteHint: 'Cliquer pour utiliser · Appuyer longuement pour supprimer'
+		},
+		en: {
+			appTitle: 'Gas prices — Quebec',
+			appSubtitle: 'Data: Régie de l\'énergie',
+			modeFav: 'Favorites',
+			modeNearby: 'Nearby',
+			modeTrip: 'On route',
+			locating: 'Locating…',
+			authRequired: 'Authorization required',
+			gpsInProgress: 'GPS in progress…',
+			allowGeolocation: 'Please allow geolocation.',
+			gpsUnavailable: 'GPS unavailable',
+			gpsDenied: 'GPS denied — use the search below.',
+			gpsPosUnavailable: 'GPS position unavailable — use search.',
+			gpsTimeout: 'GPS timed out — use search.',
+			gpsError: 'GPS error.',
+			gpsNotAvailable: 'GPS not available',
+			useAddressSearch: 'Use address search.',
+			originPlaceholder: 'Starting address or city…',
+			destPlaceholder: 'Destination address or city…',
+			searchBtn: 'Search',
+			gpsBtnTitle: 'Use GPS',
+			destination: 'Destination',
+			enterDestination: 'Enter your destination',
+			fuelRegular: 'Regular',
+			fuelSuper: 'Super',
+			fuelDiesel: 'Diesel',
+			fuelAll: 'All',
+			radiusLabel: 'Radius:',
+			detourLabel: 'Detour:',
+			loadingStations: 'Loading stations…',
+			computingRoads: 'Computing road distances…',
+			computingRoute: 'Computing route…',
+			loadError: 'Loading error: {msg}',
+			roadsUnavailable: 'Road distances unavailable ({msg}). Using straight-line distance.',
+			routeError: 'Unable to compute route: {msg}',
+			enterOD: 'Enter an origin and a destination.',
+			noStationsNearby: 'No station found (radius of {val} km).',
+			noStationsTrip: 'No station found (detour of {val} km).',
+			noFavs: 'No favorite stations. Add some with the ⭐ star on the other tabs.',
+			stationCount: '{n} station — {fuel}',
+			stationCountPlural: '{n} stations — {fuel}',
+			allTypes: 'All types',
+			oorNearby: 'out of range',
+			oorTrip: 'off detour',
+			straightLine: 'straight-line',
+			roadDistance: 'road distance',
+			updated: 'Updated:',
+			detourPrefix: 'detour',
+			fromStart: 'from start',
+			distanceUnknown: 'distance unknown',
+			detourMaxLabel: 'detour ≤ {d} km · route {m}',
+			radiusMeta: '{r} km · {mode}',
+			favMetaWithDist: '{d}{dur}',
+			favMetaNoDist: 'favorite',
+			addPlace: 'Add',
+			savePlacePromptOrigin: 'Name for this starting location:',
+			savePlacePromptDest: 'Name for this destination:',
+			confirmDeletePlace: 'Delete "{name}"?',
+			noLocationSet: 'Set a location first.',
+			chipDeleteHint: 'Tap to use · Long-press to delete'
+		}
+	};
+
+	let currentLang = localStorage.getItem(LANG_STORAGE_KEY) || 'fr';
+	if (!i18n[currentLang]) { currentLang = 'fr'; }
+
+	function t(key, params) {
+		let str = i18n[currentLang][key] ?? key;
+		if (params) {
+			for (const k in params) { str = str.replace(`{${k}}`, params[k]); }
+		}
+		return str;
+	}
+
+	// ── State ──
+	let mode = 'nearby'; // 'fav' | 'nearby' | 'trip'
+	let originLat = null, originLon = null;
+	let destLat = null, destLon = null;
+	let stationsData = null, metadata = null;
 	let activeFuel = 'Régulier';
 	let activeRadius = 10;
+	let activeDetour = 2;
 	let gpsWatchId = null;
-	let searchDebounce = null;
+	let originFromGPS = false; // false once user manually picks an origin
+	let nearbyCache = null;
+	let tripCache = null;
+	let computingNearby = false;
+	let computingTrip = false;
+
+	let favorites = new Set();
+	try { favorites = new Set(JSON.parse(localStorage.getItem(FAV_STORAGE_KEY) || '[]')); }
+	catch (_) { favorites = new Set(); }
+
+	// Saved places: [{id, name, lat, lon}]
+	let places = [];
+	try { places = JSON.parse(localStorage.getItem(PLACES_STORAGE_KEY) || '[]'); }
+	catch (_) { places = []; }
+	function savePlaces() { localStorage.setItem(PLACES_STORAGE_KEY, JSON.stringify(places)); }
 
 	const $ = id => document.getElementById(id);
 
-	// ── Haversine distance in km ──
+	// ── Geometry ──
 	function distanceKm(lat1, lon1, lat2, lon2) {
 		const R = 6371;
 		const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -511,15 +842,73 @@
 		return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	}
 
-	// ── Parse "199.9¢" → 199.9 ──
+	function toPlanar(lat, lon, latRef) {
+		const M_PER_DEG_LAT = 111320;
+		const mPerDegLon = M_PER_DEG_LAT * Math.cos(latRef * Math.PI / 180);
+		return { x: lon * mPerDegLon, y: lat * M_PER_DEG_LAT };
+	}
+
+	function pointToSegment(pLat, pLon, aLat, aLon, bLat, bLon) {
+		const latRef = (aLat + bLat) / 2;
+		const p = toPlanar(pLat, pLon, latRef);
+		const a = toPlanar(aLat, aLon, latRef);
+		const b = toPlanar(bLat, bLon, latRef);
+		const dx = b.x - a.x, dy = b.y - a.y;
+		const l2 = dx * dx + dy * dy;
+		if (l2 === 0) {
+			const mx = p.x - a.x, my = p.y - a.y;
+			return { dist: Math.sqrt(mx * mx + my * my), tFrac: 0 };
+		}
+		let tFrac = ((p.x - a.x) * dx + (p.y - a.y) * dy) / l2;
+		tFrac = Math.max(0, Math.min(1, tFrac));
+		const cx = a.x + tFrac * dx, cy = a.y + tFrac * dy;
+		const ex = p.x - cx, ey = p.y - cy;
+		return { dist: Math.sqrt(ex * ex + ey * ey), tFrac };
+	}
+
+	function computeCumulative(path) {
+		const cum = [0];
+		for (let i = 1; i < path.length; i++) {
+			cum.push(cum[i - 1] + distanceKm(path[i - 1].lat, path[i - 1].lng, path[i].lat, path[i].lng) * 1000);
+		}
+		return cum;
+	}
+
+	function pointToPolyline(pLat, pLon, path, cum) {
+		let minDist = Infinity, alongM = 0;
+		for (let i = 0; i < path.length - 1; i++) {
+			const { dist, tFrac } = pointToSegment(pLat, pLon, path[i].lat, path[i].lng, path[i + 1].lat, path[i + 1].lng);
+			if (dist < minDist) {
+				minDist = dist;
+				alongM = cum[i] + tFrac * (cum[i + 1] - cum[i]);
+			}
+		}
+		return { offRouteM: minDist, alongRouteM: alongM };
+	}
+
+	// ── Formatting ──
 	function parsePrice(str) {
 		if (!str) { return null; }
 		const n = parseFloat(str.replace(/[^\d.]/g, ''));
 		return isNaN(n) ? null : n;
 	}
 
-	function formatPrice(cents) {
-		return cents !== null ? cents.toFixed(1) + '¢' : null;
+	function formatPrice(c) { return c !== null ? c.toFixed(1) + '¢' : '—'; }
+
+	function formatDistance(m) {
+		if (m === null || m === undefined) { return '—'; }
+		if (m < 1000) { return Math.round(m) + ' m'; }
+		return (m / 1000).toFixed(1) + ' km';
+	}
+
+	function formatDuration(s) {
+		if (s === null || s === undefined) { return ''; }
+		const min = Math.round(s / 60);
+		if (min < 1) { return currentLang === 'fr' ? '< 1 min' : '< 1 min'; }
+		if (min < 60) { return min + ' min'; }
+		const h = Math.floor(min / 60), mm = min % 60;
+		const hLbl = currentLang === 'fr' ? 'h' : 'h';
+		return mm === 0 ? `${h} ${hLbl}` : `${h} ${hLbl} ${mm.toString().padStart(2, '0')}`;
 	}
 
 	function esc(str) {
@@ -528,164 +917,96 @@
 			.replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
 
-	// ── Status UI ──
+	// ── Favorites ──
+	function stationId(feature) {
+		const [lon, lat] = feature.geometry.coordinates;
+		return `${lat.toFixed(6)}_${lon.toFixed(6)}`;
+	}
+
+	function isFavorite(feature) { return favorites.has(stationId(feature)); }
+
+	// ── Status ──
 	const ICON_INFO = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
-	const ICON_ERR  = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+	const ICON_ERR = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+	const ICON_WARN = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
 
 	function showStatus(html, type) {
 		$('statusArea').innerHTML = `<div class="status ${type}">${html}</div>`;
 	}
 	function clearStatus() { $('statusArea').innerHTML = ''; }
 
-	// ── Set user position ──
-	function applyPosition(lat, lon, label) {
-		userLat = lat;
-		userLon = lon;
-		locationLabel = label;
-		$('locationLabel').textContent = label;
-		$('locationSub').textContent = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-		if (stationsData) {
-			clearStatus();
-			renderResults();
-		} else {
-			loadStations();
-		}
-	}
-
-	// ── GPS ──
-	function startGPS() {
-		if (!navigator.geolocation) { return; }
-
-		$('locationLabel').textContent = 'GPS en cours…';
-		$('locationSub').textContent = 'Veuillez autoriser la géolocalisation.';
-		$('gpsBtn').disabled = true;
-
-		if (gpsWatchId !== null) {
-			navigator.geolocation.clearWatch(gpsWatchId);
-		}
-
-		gpsWatchId = navigator.geolocation.watchPosition(
-			pos => {
-				$('gpsBtn').disabled = false;
-				applyPosition(pos.coords.latitude, pos.coords.longitude,
-					`GPS (±${Math.round(pos.coords.accuracy)} m)`);
-			},
-			err => {
-				$('gpsBtn').disabled = false;
-				const msgs = {
-					1: 'GPS refusé — utilisez la recherche ci-dessous.',
-					2: 'Position GPS indisponible — utilisez la recherche.',
-					3: 'Délai GPS dépassé — utilisez la recherche.'
-				};
-				$('locationLabel').textContent = 'GPS indisponible';
-				$('locationSub').textContent = msgs[err.code] || 'Erreur GPS.';
-				// Don't show a big error; the address box is right there
-			},
-			{ enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
-		);
-	}
-
-	// ── Address search (Nominatim) ──
-	async function searchAddress(query) {
-		if (!query.trim()) { return []; }
-		const params = new URLSearchParams({
-			q: query,
-			format: 'json',
-			limit: '5',
-			countrycodes: 'ca',
-			'accept-language': 'fr'
+	// ── Google Maps loader ──
+	let mapsApiPromise = null;
+	function ensureMapsApi() {
+		if (mapsApiPromise) { return mapsApiPromise; }
+		mapsApiPromise = new Promise((resolve, reject) => {
+			window.__gmapsReady = () => resolve();
+			const s = document.createElement('script');
+			s.async = true; s.defer = true;
+			s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_KEY)}&libraries=geometry&callback=__gmapsReady&v=weekly`;
+			s.onerror = () => { mapsApiPromise = null; reject(new Error('Google Maps load failed')); };
+			document.head.appendChild(s);
 		});
-		const res = await fetch(`${NOMINATIM_URL}?${params}`, {
-			headers: { 'Accept-Language': 'fr' }
+		return mapsApiPromise;
+	}
+
+	// ── Distance Matrix ──
+	async function getRoadDistances(origin, destinations) {
+		await ensureMapsApi();
+		const service = new google.maps.DistanceMatrixService();
+		const BATCH = 25;
+		const out = new Array(destinations.length).fill(null);
+		const tasks = [];
+		for (let i = 0; i < destinations.length; i += BATCH) {
+			const slice = destinations.slice(i, i + BATCH);
+			const start = i;
+			tasks.push(new Promise((resolve, reject) => {
+				service.getDistanceMatrix({
+					origins: [origin],
+					destinations: slice,
+					travelMode: google.maps.TravelMode.DRIVING,
+					unitSystem: google.maps.UnitSystem.METRIC
+				}, (resp, status) => {
+					if (status !== 'OK') { reject(new Error('DistanceMatrix: ' + status)); return; }
+					const elements = resp.rows[0].elements;
+					for (let j = 0; j < slice.length; j++) {
+						const el = elements[j];
+						if (el.status === 'OK') { out[start + j] = { distM: el.distance.value, durS: el.duration.value }; }
+					}
+					resolve();
+				});
+			}));
+		}
+		await Promise.all(tasks);
+		return out;
+	}
+
+	// ── Directions (trip) ──
+	async function getRoute(oLat, oLon, dLat, dLon) {
+		await ensureMapsApi();
+		const service = new google.maps.DirectionsService();
+		return new Promise((resolve, reject) => {
+			service.route({
+				origin: { lat: oLat, lng: oLon },
+				destination: { lat: dLat, lng: dLon },
+				travelMode: google.maps.TravelMode.DRIVING,
+				unitSystem: google.maps.UnitSystem.METRIC
+			}, (resp, status) => {
+				if (status !== 'OK') { reject(new Error('Directions: ' + status)); return; }
+				const route = resp.routes[0];
+				resolve({
+					path: route.overview_path.map(p => ({ lat: p.lat(), lng: p.lng() })),
+					totalM: route.legs.reduce((s, l) => s + l.distance.value, 0),
+					totalS: route.legs.reduce((s, l) => s + l.duration.value, 0)
+				});
+			});
 		});
-		if (!res.ok) { throw new Error('HTTP ' + res.status); }
-		return res.json();
 	}
 
-	function showAutocomplete(results) {
-		const list = $('autocompleteList');
-		if (!results.length) {
-			list.hidden = true;
-			return;
-		}
-		list.innerHTML = results.map((r, i) =>
-			`<button type="button" data-idx="${i}">${esc(r.display_name)}</button>`
-		).join('');
-		list._results = results;
-		list.hidden = false;
-	}
-
-	function hideAutocomplete() {
-		$('autocompleteList').hidden = true;
-	}
-
-	$('addressInput').addEventListener('input', () => {
-		clearTimeout(searchDebounce);
-		const q = $('addressInput').value;
-		if (q.length < 3) { hideAutocomplete(); return; }
-		searchDebounce = setTimeout(async () => {
-			try {
-				const results = await searchAddress(q);
-				showAutocomplete(results);
-			} catch (_) {
-				hideAutocomplete();
-			}
-		}, 350);
-	});
-
-	$('addressInput').addEventListener('keydown', e => {
-		if (e.key === 'Enter') { doAddressSearch(); }
-	});
-
-	$('autocompleteList').addEventListener('click', e => {
-		const btn = e.target.closest('button[data-idx]');
-		if (!btn) { return; }
-		const r = $('autocompleteList')._results[+btn.dataset.idx];
-		hideAutocomplete();
-		$('addressInput').value = r.display_name;
-		applyPosition(+r.lat, +r.lon, r.display_name.split(',')[0].trim());
-	});
-
-	document.addEventListener('click', e => {
-		if (!$('addressSearchRow').contains(e.target)) { hideAutocomplete(); }
-	});
-
-	async function doAddressSearch() {
-		const q = $('addressInput').value.trim();
-		if (!q) { return; }
-		hideAutocomplete();
-		$('addressSearchBtn').disabled = true;
-		$('addressSearchBtn').textContent = '…';
-		try {
-			const results = await searchAddress(q);
-			if (!results.length) {
-				$('locationLabel').textContent = 'Adresse introuvable';
-				$('locationSub').textContent = 'Essayez un autre terme.';
-			} else {
-				const r = results[0];
-				$('addressInput').value = r.display_name;
-				applyPosition(+r.lat, +r.lon, r.display_name.split(',')[0].trim());
-			}
-		} catch (err) {
-			$('locationLabel').textContent = 'Erreur de recherche';
-			$('locationSub').textContent = err.message;
-		} finally {
-			$('addressSearchBtn').disabled = false;
-			$('addressSearchBtn').textContent = 'Chercher';
-		}
-	}
-
-	$('addressSearchBtn').addEventListener('click', doAddressSearch);
-
-	// ── GPS button ──
-	$('gpsBtn').addEventListener('click', () => {
-		$('gpsBtn').disabled = true;
-		startGPS();
-	});
-
-	// ── Fetch stations ──
-	async function loadStations() {
-		showStatus('<div class="spinner"></div><span>Chargement des stations…</span>', 'loading');
+	// ── Load stations ──
+	async function ensureStationsLoaded() {
+		if (stationsData) { return; }
+		showStatus(`<div class="spinner"></div><span>${t('loadingStations')}</span>`, 'loading');
 		try {
 			const json = await fetch(GEOJSON_URL, { cache: 'no-cache' }).then(r => {
 				if (!r.ok) { throw new Error('HTTP ' + r.status); }
@@ -694,91 +1015,410 @@
 			metadata = json.metadata || null;
 			stationsData = json.features || [];
 			clearStatus();
-			renderResults();
 		} catch (err) {
-			showStatus(`${ICON_ERR}<span>Erreur de chargement : ${esc(err.message)}</span>`, 'error');
+			showStatus(`${ICON_ERR}<span>${t('loadError', { msg: esc(err.message) })}</span>`, 'error');
 		}
 	}
 
-	// ── Render results ──
-	function renderResults() {
-		if (!stationsData || userLat === null) { return; }
+	// ── Nearby cache ──
+	async function computeNearbyCache() {
+		if (!stationsData || originLat === null) { return; }
+		if (computingNearby) { return; }
 
-		const candidates = [];
+		const bufferKm = MAX_RADIUS_KM * ROAD_BUFFER;
+		const preFiltered = [];
+		const favList = [];
 		for (const feature of stationsData) {
 			const [lon, lat] = feature.geometry.coordinates;
-			const dist = distanceKm(userLat, userLon, lat, lon);
-			if (dist > activeRadius) { continue; }
+			const d = distanceKm(originLat, originLon, lat, lon);
+			if (d <= bufferKm) { preFiltered.push({ feature, straightKm: d }); }
+			if (isFavorite(feature)) { favList.push({ feature, straightKm: d }); }
+		}
+		preFiltered.sort((a, b) => a.straightKm - b.straightKm);
+		const candidates = preFiltered.slice(0, MAX_CANDIDATES);
 
-			const props = feature.properties;
-			const prices = props.Prices || [];
-
-			if (activeFuel === 'Tous') {
-				const priceMap = {};
-				for (const p of prices) {
-					if (p.IsAvailable) { priceMap[p.GasType] = parsePrice(p.Price); }
-				}
-				if (!Object.keys(priceMap).length) { continue; }
-				const vals = Object.values(priceMap).filter(v => v !== null);
-				candidates.push({ props, dist, priceMap, sortKey: vals.length ? Math.min(...vals) : Infinity });
-			} else {
-				const entry = prices.find(p => p.GasType === activeFuel && p.IsAvailable);
-				if (!entry) { continue; }
-				const price = parsePrice(entry.Price);
-				if (price === null) { continue; }
-				candidates.push({ props, dist, price, sortKey: price });
-			}
+		const inCand = new Set(candidates.map(c => stationId(c.feature)));
+		for (const fav of favList) {
+			if (!inCand.has(stationId(fav.feature))) { candidates.push(fav); }
 		}
 
-		candidates.sort((a, b) => a.sortKey - b.sortKey || a.dist - b.dist);
-
 		if (!candidates.length) {
-			$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}Aucune station trouvée dans un rayon de ${activeRadius} km.</div>`;
+			nearbyCache = { lat: originLat, lon: originLon, entries: [], fallback: false };
+			renderResults();
 			return;
 		}
 
-		const genCard = c => {
-			const { props, dist } = c;
-			const brand = props.brand ? `<span class="brand-chip">${esc(props.brand)}</span>` : '';
-			const distStr = dist < 1 ? (dist * 1000).toFixed(0) + ' m' : dist.toFixed(1) + ' km';
+		computingNearby = true;
+		showStatus(`<div class="spinner"></div><span>${t('computingRoads')}</span>`, 'loading');
 
-			let priceHtml;
-			if (activeFuel === 'Tous') {
-				const pills = ['Régulier', 'Super', 'Diesel'].map(ft => {
-					const v = c.priceMap[ft];
-					return `<div class="price-pill">
-						<span class="label">${FUEL_LABELS[ft]}</span>
-						<span class="${v !== null ? 'amount' : 'amount na'}">${v !== null ? formatPrice(v) : '—'}</span>
-					</div>`;
-				}).join('');
-				priceHtml = `<div class="prices-row">${pills}</div>`;
-			} else {
-				priceHtml = `<span class="station-price">${formatPrice(c.price)}</span>`;
-			}
-
-			return `<div class="station-card">
-				<span class="station-name">${brand}${esc(props.Name)}</span>
-				${priceHtml}
-				<span class="station-meta">${esc(props.Address)} · ${distStr}</span>
-			</div>`;
-		};
-
-		const updatedAt = metadata
-			? new Date(metadata.generated_at).toLocaleString('fr-CA', { dateStyle: 'short', timeStyle: 'short' })
-			: '';
-
-		$('resultsArea').innerHTML = `
-			<div class="card">
-				<div class="results-header">
-					<h2>${candidates.length} station${candidates.length > 1 ? 's' : ''} — ${activeFuel !== 'Tous' ? activeFuel : 'Tous types'}</h2>
-					<span>${activeRadius} km</span>
-				</div>
-				<div class="station-list">${candidates.map(genCard).join('')}</div>
-				${updatedAt ? `<p class="freshness">Mise à jour : ${updatedAt}</p>` : ''}
-			</div>`;
+		try {
+			const origin = { lat: originLat, lng: originLon };
+			const destinations = candidates.map(c => ({
+				lat: c.feature.geometry.coordinates[1],
+				lng: c.feature.geometry.coordinates[0]
+			}));
+			const road = await getRoadDistances(origin, destinations);
+			const entries = candidates.map((c, i) => ({
+				feature: c.feature,
+				straightKm: c.straightKm,
+				roadM: road[i] ? road[i].distM : null,
+				durS: road[i] ? road[i].durS : null
+			}));
+			nearbyCache = { lat: originLat, lon: originLon, entries, fallback: false };
+			clearStatus();
+		} catch (err) {
+			const entries = candidates.map(c => ({ feature: c.feature, straightKm: c.straightKm, roadM: null, durS: null }));
+			nearbyCache = { lat: originLat, lon: originLon, entries, fallback: true };
+			showStatus(`${ICON_WARN}<span>${t('roadsUnavailable', { msg: esc(err.message) })}</span>`, 'warn');
+		} finally {
+			computingNearby = false;
+			renderResults();
+		}
 	}
 
-	// ── Controls ──
+	function nearbyCacheValid() {
+		if (!nearbyCache) { return false; }
+		return distanceKm(originLat, originLon, nearbyCache.lat, nearbyCache.lon) < CACHE_THRESHOLD_KM;
+	}
+
+	// ── Trip cache ──
+	async function computeTripCache() {
+		if (!stationsData || originLat === null || destLat === null) { return; }
+		if (computingTrip) { return; }
+
+		computingTrip = true;
+		showStatus(`<div class="spinner"></div><span>${t('computingRoute')}</span>`, 'loading');
+
+		try {
+			const route = await getRoute(originLat, originLon, destLat, destLon);
+			const path = route.path;
+			const cum = computeCumulative(path);
+
+			let minLat = Infinity, maxLat = -Infinity, minLon = Infinity, maxLon = -Infinity;
+			for (const p of path) {
+				if (p.lat < minLat) { minLat = p.lat; }
+				if (p.lat > maxLat) { maxLat = p.lat; }
+				if (p.lng < minLon) { minLon = p.lng; }
+				if (p.lng > maxLon) { maxLon = p.lng; }
+			}
+			const padDeg = (MAX_DETOUR_KM / 111.32) * 1.2;
+			minLat -= padDeg; maxLat += padDeg;
+			minLon -= padDeg * 1.5; maxLon += padDeg * 1.5;
+
+			const maxOffM = MAX_DETOUR_KM * 1000;
+			const entries = [];
+			for (const feature of stationsData) {
+				const [lon, lat] = feature.geometry.coordinates;
+				const inBbox = lat >= minLat && lat <= maxLat && lon >= minLon && lon <= maxLon;
+				if (!inBbox && !isFavorite(feature)) { continue; }
+				const { offRouteM, alongRouteM } = pointToPolyline(lat, lon, path, cum);
+				if (offRouteM <= maxOffM || isFavorite(feature)) {
+					entries.push({ feature, offRouteM, alongRouteM });
+				}
+			}
+
+			tripCache = {
+				oLat: originLat, oLon: originLon,
+				dLat: destLat, dLon: destLon,
+				path, totalM: route.totalM, totalS: route.totalS, entries
+			};
+			clearStatus();
+		} catch (err) {
+			tripCache = null;
+			showStatus(`${ICON_ERR}<span>${t('routeError', { msg: esc(err.message) })}</span>`, 'error');
+		} finally {
+			computingTrip = false;
+			renderResults();
+		}
+	}
+
+	function tripCacheValid() {
+		if (!tripCache) { return false; }
+		if (tripCache.dLat !== destLat || tripCache.dLon !== destLon) { return false; }
+		return distanceKm(originLat, originLon, tripCache.oLat, tripCache.oLon) < CACHE_THRESHOLD_KM;
+	}
+
+	// ── Apply origin/destination ──
+	async function applyOrigin(lat, lon, label) {
+		originLat = lat;
+		originLon = lon;
+		$('originLabel').textContent = label;
+		$('originSub').textContent = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		await ensureStationsLoaded();
+		await triggerCompute();
+	}
+
+	async function applyDestination(lat, lon, label) {
+		destLat = lat;
+		destLon = lon;
+		$('destLabel').textContent = label;
+		$('destSub').textContent = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		if (mode === 'trip') { await triggerCompute(); }
+	}
+
+	async function triggerCompute() {
+		if (!stationsData) { await ensureStationsLoaded(); }
+		if (!stationsData) { return; }
+
+		if (mode === 'fav') {
+			// Favorites mode: compute nearby cache for distances if origin set, but also renders without
+			if (originLat !== null && !nearbyCacheValid()) { await computeNearbyCache(); }
+			else { renderResults(); }
+		} else if (mode === 'nearby') {
+			if (originLat === null) { renderResults(); return; }
+			if (nearbyCacheValid()) { renderResults(); }
+			else { await computeNearbyCache(); }
+		} else if (mode === 'trip') {
+			if (originLat === null || destLat === null) { renderResults(); return; }
+			if (tripCacheValid()) { renderResults(); }
+			else { await computeTripCache(); }
+		}
+	}
+
+	// ── GPS ──
+	function startGPS() {
+		if (!navigator.geolocation) { return; }
+		originFromGPS = true;
+		$('originLabel').textContent = t('gpsInProgress');
+		$('originSub').textContent = t('allowGeolocation');
+		$('gpsBtn').disabled = true;
+		if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); }
+		gpsWatchId = navigator.geolocation.watchPosition(
+			pos => {
+				$('gpsBtn').disabled = false;
+				if (!originFromGPS) { return; } // user picked a manual origin; don't override
+				applyOrigin(pos.coords.latitude, pos.coords.longitude,
+					`GPS (±${Math.round(pos.coords.accuracy)} m)`);
+			},
+			err => {
+				$('gpsBtn').disabled = false;
+				const key = { 1: 'gpsDenied', 2: 'gpsPosUnavailable', 3: 'gpsTimeout' }[err.code] || 'gpsError';
+				$('originLabel').textContent = t('gpsUnavailable');
+				$('originSub').textContent = t(key);
+			},
+			{ enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+		);
+	}
+
+	// ── Address search ──
+	async function searchAddress(query) {
+		if (!query.trim()) { return []; }
+		const params = new URLSearchParams({
+			q: query, format: 'json', limit: '5',
+			countrycodes: 'ca', 'accept-language': currentLang
+		});
+		const res = await fetch(`${NOMINATIM_URL}?${params}`, {
+			headers: { 'Accept-Language': currentLang }
+		});
+		if (!res.ok) { throw new Error('HTTP ' + res.status); }
+		return res.json();
+	}
+
+	function wireAddressBox(inputId, btnId, listId, rowId, onSelect) {
+		const input = $(inputId), btn = $(btnId), list = $(listId), row = $(rowId);
+		let debounce = null;
+
+		function hide() { list.hidden = true; }
+		function show(results) {
+			if (!results.length) { hide(); return; }
+			list.innerHTML = results.map((r, i) =>
+				`<button type="button" data-idx="${i}">${esc(r.display_name)}</button>`
+			).join('');
+			list._results = results;
+			list.hidden = false;
+		}
+
+		input.addEventListener('input', () => {
+			clearTimeout(debounce);
+			const q = input.value;
+			if (q.length < 3) { hide(); return; }
+			debounce = setTimeout(async () => {
+				try { show(await searchAddress(q)); } catch (_) { hide(); }
+			}, 350);
+		});
+
+		input.addEventListener('keydown', e => {
+			if (e.key === 'Enter') { doSearch(); }
+		});
+
+		list.addEventListener('click', e => {
+			const b = e.target.closest('button[data-idx]');
+			if (!b) { return; }
+			const r = list._results[+b.dataset.idx];
+			hide();
+			input.value = r.display_name;
+			onSelect(+r.lat, +r.lon, r.display_name.split(',')[0].trim());
+		});
+
+		document.addEventListener('click', e => {
+			if (!row.contains(e.target)) { hide(); }
+		});
+
+		async function doSearch() {
+			const q = input.value.trim();
+			if (!q) { return; }
+			hide();
+			btn.disabled = true;
+			btn.textContent = '…';
+			try {
+				const results = await searchAddress(q);
+				if (results.length) {
+					const r = results[0];
+					input.value = r.display_name;
+					onSelect(+r.lat, +r.lon, r.display_name.split(',')[0].trim());
+				}
+			} catch (err) {
+				console.error(err);
+			} finally {
+				btn.disabled = false;
+				btn.textContent = t('searchBtn');
+			}
+		}
+
+		btn.addEventListener('click', doSearch);
+	}
+
+	wireAddressBox('originInput', 'originSearchBtn', 'originAutocomplete', 'originSearchRow',
+		(lat, lon, label) => { originFromGPS = false; applyOrigin(lat, lon, label); });
+	wireAddressBox('destInput', 'destSearchBtn', 'destAutocomplete', 'destSearchRow',
+		(lat, lon, label) => applyDestination(lat, lon, label));
+
+	// ── Saved places ──
+	const PIN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+	const PLUS_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+
+	function renderPlaces() {
+		const hint = t('chipDeleteHint');
+		const chipsHtml = places.map(p =>
+			`<button class="place-chip" data-place-id="${esc(p.id)}" title="${esc(hint)}">${PIN_ICON}<span>${esc(p.name)}</span></button>`
+		).join('');
+		const addChip = role =>
+			`<button class="place-chip add-chip" data-add-for="${role}">${PLUS_ICON}<span>${esc(t('addPlace'))}</span></button>`;
+		$('originPlaces').innerHTML = chipsHtml + addChip('origin');
+		$('destPlaces').innerHTML = chipsHtml + addChip('dest');
+	}
+
+	function handlePlacesClick(e, role) {
+		const chip = e.target.closest('.place-chip');
+		if (!chip) { return; }
+		if (chip.classList.contains('add-chip')) {
+			const curLat = role === 'origin' ? originLat : destLat;
+			const curLon = role === 'origin' ? originLon : destLon;
+			if (curLat === null || curLon === null) { alert(t('noLocationSet')); return; }
+			const promptKey = role === 'origin' ? 'savePlacePromptOrigin' : 'savePlacePromptDest';
+			const name = prompt(t(promptKey));
+			if (!name || !name.trim()) { return; }
+			places.push({ id: Date.now().toString(36), name: name.trim(), lat: curLat, lon: curLon });
+			savePlaces();
+			renderPlaces();
+		} else {
+			const p = places.find(x => x.id === chip.dataset.placeId);
+			if (!p) { return; }
+			if (role === 'origin') {
+				originFromGPS = false;
+				$('originInput').value = p.name;
+				applyOrigin(p.lat, p.lon, p.name);
+			} else {
+				$('destInput').value = p.name;
+				applyDestination(p.lat, p.lon, p.name);
+			}
+		}
+	}
+
+	function handlePlacesDelete(e) {
+		const chip = e.target.closest('.place-chip');
+		if (!chip || chip.classList.contains('add-chip')) { return; }
+		e.preventDefault();
+		const p = places.find(x => x.id === chip.dataset.placeId);
+		if (!p) { return; }
+		if (confirm(t('confirmDeletePlace', { name: p.name }))) {
+			places = places.filter(x => x.id !== p.id);
+			savePlaces();
+			renderPlaces();
+		}
+	}
+
+	// Long-press handling for mobile (touch + hold ~550ms)
+	function attachLongPress(container) {
+		let timer = null;
+		let fired = false;
+		container.addEventListener('touchstart', e => {
+			const chip = e.target.closest('.place-chip');
+			if (!chip || chip.classList.contains('add-chip')) { return; }
+			fired = false;
+			timer = setTimeout(() => {
+				fired = true;
+				handlePlacesDelete({ target: chip, preventDefault: () => {} });
+			}, 550);
+		}, { passive: true });
+		const clear = () => { if (timer) { clearTimeout(timer); timer = null; } };
+		container.addEventListener('touchend', e => {
+			if (fired) { e.preventDefault(); }
+			clear();
+		});
+		container.addEventListener('touchmove', clear);
+		container.addEventListener('touchcancel', clear);
+		// Track "fired" so click doesn't also run after long-press
+		container._longPressFired = () => fired;
+	}
+
+	['originPlaces', 'destPlaces'].forEach(id => {
+		const container = $(id);
+		const role = id === 'originPlaces' ? 'origin' : 'dest';
+		attachLongPress(container);
+		container.addEventListener('click', e => {
+			if (container._longPressFired && container._longPressFired()) { return; }
+			handlePlacesClick(e, role);
+		});
+		container.addEventListener('contextmenu', handlePlacesDelete);
+	});
+
+	renderPlaces();
+
+	$('gpsBtn').addEventListener('click', () => startGPS());
+
+	// ── Mode tabs ──
+	document.querySelectorAll('.mode-tab').forEach(btn => {
+		btn.addEventListener('click', () => {
+			document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			mode = btn.dataset.mode;
+			applyModeUI();
+			// Trip mode: default origin to current GPS position (unless user had it GPS-sourced already)
+			if (mode === 'trip' && !originFromGPS && navigator.geolocation) {
+				$('originInput').value = '';
+				startGPS();
+			} else {
+				triggerCompute();
+			}
+		});
+	});
+
+	function applyModeUI() {
+		// Destination card: only trip mode
+		if (mode === 'trip') { $('destinationCard').classList.remove('hidden'); }
+		else { $('destinationCard').classList.add('hidden'); }
+
+		// Slider: show for nearby/trip, hide for fav
+		if (mode === 'fav') {
+			$('sliderRow').classList.add('hidden');
+		} else {
+			$('sliderRow').classList.remove('hidden');
+			if (mode === 'trip') {
+				$('sliderLabel').textContent = t('detourLabel');
+				$('sliderMain').max = MAX_DETOUR_KM;
+				$('sliderMain').value = activeDetour;
+				$('sliderValue').textContent = activeDetour + ' km';
+			} else {
+				$('sliderLabel').textContent = t('radiusLabel');
+				$('sliderMain').max = MAX_RADIUS_KM;
+				$('sliderMain').value = activeRadius;
+				$('sliderValue').textContent = activeRadius + ' km';
+			}
+		}
+	}
+
+	// ── Fuel tabs ──
 	document.querySelectorAll('.fuel-tab').forEach(btn => {
 		btn.addEventListener('click', () => {
 			document.querySelectorAll('.fuel-tab').forEach(b => b.classList.remove('active'));
@@ -788,19 +1428,339 @@
 		});
 	});
 
-	$('radiusSlider').addEventListener('input', () => {
-		activeRadius = parseInt($('radiusSlider').value, 10);
-		$('radiusValue').textContent = activeRadius + ' km';
+	$('sliderMain').addEventListener('input', () => {
+		const v = parseInt($('sliderMain').value, 10);
+		if (mode === 'trip') { activeDetour = v; }
+		else if (mode === 'nearby') { activeRadius = v; }
+		$('sliderValue').textContent = v + ' km';
 		renderResults();
 	});
 
-	// ── Boot: try GPS, address bar is always available ──
+	// ── Star click delegation ──
+	$('resultsArea').addEventListener('click', e => {
+		const star = e.target.closest('.fav-btn');
+		if (!star) { return; }
+		e.preventDefault();
+		e.stopPropagation();
+		const id = star.dataset.stationId;
+		if (favorites.has(id)) { favorites.delete(id); }
+		else { favorites.add(id); }
+		localStorage.setItem(FAV_STORAGE_KEY, JSON.stringify([...favorites]));
+		renderResults();
+	});
+
+	// ── Language switcher ──
+	document.querySelectorAll('.lang-btn').forEach(btn => {
+		btn.addEventListener('click', () => {
+			const lang = btn.dataset.lang;
+			if (lang === currentLang) { return; }
+			currentLang = lang;
+			localStorage.setItem(LANG_STORAGE_KEY, lang);
+			document.documentElement.lang = lang === 'fr' ? 'fr-CA' : 'en-CA';
+			document.querySelectorAll('.lang-btn').forEach(b => {
+				b.classList.toggle('active', b.dataset.lang === lang);
+			});
+			applyI18n();
+		});
+	});
+
+	function applyI18n() {
+		document.querySelectorAll('[data-i18n]').forEach(el => {
+			const key = el.dataset.i18n;
+			if (i18n[currentLang][key]) { el.textContent = i18n[currentLang][key]; }
+		});
+		document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+			const key = el.dataset.i18nPlaceholder;
+			if (i18n[currentLang][key]) { el.placeholder = i18n[currentLang][key]; }
+		});
+		document.querySelectorAll('[data-i18n-title]').forEach(el => {
+			const key = el.dataset.i18nTitle;
+			if (i18n[currentLang][key]) { el.title = i18n[currentLang][key]; }
+		});
+		document.title = t('appTitle');
+		applyModeUI();
+		if (typeof renderPlaces === 'function') { renderPlaces(); }
+		renderResults();
+	}
+
+	// ── Render ──
+	function renderResults() {
+		let candidates = [];
+		let cache = null;
+		let headerRight = '';
+
+		if (mode === 'fav') {
+			candidates = buildFavCandidates();
+			const distInfo = nearbyCache ? (nearbyCache.fallback ? t('straightLine') : t('roadDistance')) : '';
+			headerRight = distInfo;
+			if (!favorites.size) {
+				$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('noFavs')}</span></div>`;
+				return;
+			}
+		} else if (mode === 'nearby') {
+			cache = nearbyCache;
+			if (!cache) {
+				if (originLat === null) { $('resultsArea').innerHTML = ''; }
+				return;
+			}
+			candidates = buildNearbyCandidates(cache);
+			headerRight = t('radiusMeta', {
+				r: activeRadius,
+				mode: cache.fallback ? t('straightLine') : t('roadDistance')
+			});
+		} else { // trip
+			cache = tripCache;
+			if (!cache) {
+				if (originLat === null || destLat === null) {
+					$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('enterOD')}</span></div>`;
+				}
+				return;
+			}
+			candidates = buildTripCandidates(cache);
+			headerRight = t('detourMaxLabel', { d: activeDetour, m: formatDistance(cache.totalM) });
+		}
+
+		if (!candidates.length) {
+			if (mode === 'nearby') {
+				$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('noStationsNearby', { val: activeRadius })}</span></div>`;
+			} else if (mode === 'trip') {
+				$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('noStationsTrip', { val: activeDetour })}</span></div>`;
+			} else {
+				$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('noFavs')}</span></div>`;
+			}
+			return;
+		}
+
+		let bestIdx = -1;
+		for (let i = 0; i < candidates.length; i++) {
+			if (isFinite(candidates[i].sortKey)) { bestIdx = i; break; }
+		}
+
+		const updatedAt = metadata
+			? new Date(metadata.generated_at).toLocaleString(currentLang === 'fr' ? 'fr-CA' : 'en-CA',
+				{ dateStyle: 'short', timeStyle: 'short' })
+			: '';
+
+		const fuelLabel = activeFuel === 'Tous' ? t('allTypes') : t('fuel' + activeFuel.replace('é', 'e').replace('É', 'E'));
+		// activeFuel ∈ { Régulier, Super, Diesel, Tous } → keys fuelRegular, fuelSuper, fuelDiesel
+		const fuelKey = { 'Régulier': 'fuelRegular', 'Super': 'fuelSuper', 'Diesel': 'fuelDiesel', 'Tous': 'allTypes' }[activeFuel];
+		const fuelLabelFinal = t(fuelKey);
+		const countStr = t(candidates.length === 1 ? 'stationCount' : 'stationCountPlural',
+			{ n: candidates.length, fuel: fuelLabelFinal });
+
+		const html = candidates.map((c, i) => cardHtml(c, i === bestIdx)).join('');
+
+		$('resultsArea').innerHTML = `
+			<div class="card">
+				<div class="results-header">
+					<h2>${esc(countStr)}</h2>
+					<span>${esc(headerRight)}</span>
+				</div>
+				<div class="station-list">${html}</div>
+				${updatedAt ? `<p class="freshness">${t('updated')} ${updatedAt}</p>` : ''}
+			</div>`;
+	}
+
+	function extractPriceData(feature) {
+		const prices = feature.properties.Prices || [];
+		if (activeFuel === 'Tous') {
+			const priceMap = {};
+			for (const p of prices) {
+				if (p.IsAvailable) { priceMap[p.GasType] = parsePrice(p.Price); }
+			}
+			const vals = Object.values(priceMap).filter(v => v !== null);
+			return {
+				kind: 'multi', priceMap,
+				hasAnyPrice: vals.length > 0,
+				sortKey: vals.length ? Math.min(...vals) : Infinity
+			};
+		} else {
+			const pr = prices.find(p => p.GasType === activeFuel && p.IsAvailable);
+			const price = pr ? parsePrice(pr.Price) : null;
+			return {
+				kind: 'single', price,
+				hasAnyPrice: price !== null,
+				sortKey: price !== null ? price : Infinity
+			};
+		}
+	}
+
+	function buildNearbyCandidates(cache) {
+		const radiusM = activeRadius * 1000;
+		const out = [];
+		for (const entry of cache.entries) {
+			const distM = entry.roadM !== null ? entry.roadM : entry.straightKm * 1000;
+			const fav = isFavorite(entry.feature);
+			const outOfRange = distM > radiusM;
+			if (outOfRange && !fav) { continue; }
+
+			const priceData = extractPriceData(entry.feature);
+			if (!priceData.hasAnyPrice && !fav) { continue; }
+
+			out.push({
+				feature: entry.feature,
+				fav, outOfRange,
+				distM, durS: entry.durS,
+				priceData, sortKey: priceData.sortKey,
+				subtitle: `${formatDistance(distM)}${entry.durS !== null ? ' · ' + formatDuration(entry.durS) : ''}`
+			});
+		}
+		out.sort((a, b) => a.sortKey - b.sortKey || a.distM - b.distM);
+		return out.slice(0, MAX_RESULTS);
+	}
+
+	function buildTripCandidates(cache) {
+		const maxOffM = activeDetour * 1000;
+		const out = [];
+		for (const entry of cache.entries) {
+			const fav = isFavorite(entry.feature);
+			const outOfRange = entry.offRouteM > maxOffM;
+			if (outOfRange && !fav) { continue; }
+
+			const priceData = extractPriceData(entry.feature);
+			if (!priceData.hasAnyPrice && !fav) { continue; }
+
+			const detourStr = `${t('detourPrefix')} ${formatDistance(entry.offRouteM)}`;
+			const alongStr = `${formatDistance(entry.alongRouteM)} ${t('fromStart')}`;
+
+			out.push({
+				feature: entry.feature,
+				fav, outOfRange,
+				distM: entry.offRouteM,
+				durS: null,
+				alongRouteM: entry.alongRouteM,
+				priceData, sortKey: priceData.sortKey,
+				subtitle: `${detourStr} · ${alongStr}`
+			});
+		}
+		out.sort((a, b) => a.sortKey - b.sortKey || a.alongRouteM - b.alongRouteM);
+		return out.slice(0, MAX_RESULTS);
+	}
+
+	function buildFavCandidates() {
+		if (!stationsData) { return []; }
+
+		// Build distance lookup from nearbyCache if available
+		const distMap = new Map();
+		if (nearbyCache) {
+			for (const e of nearbyCache.entries) {
+				const id = stationId(e.feature);
+				distMap.set(id, {
+					distM: e.roadM !== null ? e.roadM : e.straightKm * 1000,
+					durS: e.durS
+				});
+			}
+		}
+
+		const out = [];
+		for (const feature of stationsData) {
+			if (!isFavorite(feature)) { continue; }
+			const priceData = extractPriceData(feature);
+			const id = stationId(feature);
+			const dist = distMap.get(id);
+
+			let subtitle;
+			if (dist) {
+				subtitle = t('favMetaWithDist', {
+					d: formatDistance(dist.distM),
+					dur: dist.durS !== null ? ' · ' + formatDuration(dist.durS) : ''
+				});
+			} else {
+				subtitle = originLat !== null
+					? formatDistance(distanceKm(originLat, originLon,
+						feature.geometry.coordinates[1], feature.geometry.coordinates[0]) * 1000)
+					+ ' · ' + t('straightLine')
+					: t('favMetaNoDist');
+			}
+
+			out.push({
+				feature,
+				fav: true,
+				outOfRange: false,
+				distM: dist ? dist.distM : null,
+				durS: dist ? dist.durS : null,
+				priceData, sortKey: priceData.sortKey,
+				subtitle
+			});
+		}
+		out.sort((a, b) => a.sortKey - b.sortKey
+			|| ((a.distM ?? Infinity) - (b.distM ?? Infinity)));
+		return out;
+	}
+
+	function starIcon(filled) {
+		return filled
+			? `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+			: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+	}
+
+	function cardHtml(c, isBest) {
+		const { feature, fav, outOfRange, priceData, subtitle } = c;
+		const props = feature.properties;
+		const [lon, lat] = feature.geometry.coordinates;
+		const brand = props.brand ? `<span class="brand-chip">${esc(props.brand)}</span>` : '';
+		const oor = outOfRange
+			? `<span class="badge oor">${t(mode === 'nearby' ? 'oorNearby' : 'oorTrip')}</span>`
+			: '';
+
+		let priceHtml;
+		if (priceData.kind === 'multi') {
+			const labels = {
+				'Régulier': t('fuelRegular').substring(0, 4) + '.',
+				'Super': t('fuelSuper'),
+				'Diesel': t('fuelDiesel').substring(0, 4) + '.'
+			};
+			const pills = ['Régulier', 'Super', 'Diesel'].map(ft => {
+				const v = priceData.priceMap[ft];
+				return `<div class="price-pill">
+					<span class="label">${esc(labels[ft])}</span>
+					<span class="${v !== null ? 'amount' : 'amount na'}">${v !== null ? formatPrice(v) : '—'}</span>
+				</div>`;
+			}).join('');
+			priceHtml = `<div class="prices-row">${pills}</div>`;
+		} else {
+			priceHtml = `<span class="station-price">${priceData.price !== null ? formatPrice(priceData.price) : '—'}</span>`;
+		}
+
+		let mapsUrl;
+		if (mode === 'trip' && destLat !== null && originLat !== null) {
+			mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${originLat},${originLon}&destination=${destLat},${destLon}&waypoints=${lat},${lon}&travelmode=driving`;
+		} else if (originLat !== null) {
+			mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${originLat},${originLon}&destination=${lat},${lon}&travelmode=driving`;
+		} else {
+			mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+		}
+
+		const classes = ['station-card'];
+		if (isBest) { classes.push('is-best'); }
+		if (fav) { classes.push('is-fav'); }
+		const sid = stationId(feature);
+
+		return `<a class="${classes.join(' ')}" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">
+			<span class="fav-btn${fav ? ' active' : ''}" role="button" aria-label="Favori" data-station-id="${sid}">${starIcon(fav)}</span>
+			<span class="station-name">${brand}${esc(props.Name)}${oor}</span>
+			${priceHtml}
+			<span class="station-meta">${esc(props.Address)} · ${subtitle}</span>
+			<span class="dir-arrow">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+			</span>
+		</a>`;
+	}
+
+	// ── Boot ──
+	document.querySelectorAll('.lang-btn').forEach(b => {
+		b.classList.toggle('active', b.dataset.lang === currentLang);
+	});
+	document.documentElement.lang = currentLang === 'fr' ? 'fr-CA' : 'en-CA';
+	applyI18n();
+	applyModeUI();
+
 	if (navigator.geolocation) {
 		$('gpsBtn').disabled = false;
 		startGPS();
 	} else {
-		$('locationLabel').textContent = 'GPS non disponible';
-		$('locationSub').textContent = 'Utilisez la recherche d\'adresse.';
+		$('originLabel').textContent = t('gpsNotAvailable');
+		$('originSub').textContent = t('useAddressSearch');
 	}
 })();
 </script>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Prix essence — Québec</title>
+	<style>
+		:root {
+			--blue: #095797;
+			--blue-dark: #063d6a;
+			--blue-light: #e8f2fb;
+			--green: #2e7d32;
+			--green-light: #e8f5e9;
+			--gray-100: #f5f5f5;
+			--gray-200: #eeeeee;
+			--gray-400: #bdbdbd;
+			--gray-600: #757575;
+			--gray-800: #424242;
+			--radius: 10px;
+			--shadow: 0 2px 8px rgba(0,0,0,.10);
+		}
+
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			background: var(--gray-100);
+			color: var(--gray-800);
+			min-height: 100dvh;
+		}
+
+		header {
+			background: var(--blue);
+			color: white;
+			padding: 16px 20px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			box-shadow: 0 2px 6px rgba(0,0,0,.2);
+			position: sticky;
+			top: 0;
+			z-index: 10;
+		}
+
+		header svg { flex-shrink: 0; }
+
+		header h1 {
+			font-size: 1.1rem;
+			font-weight: 600;
+			line-height: 1.2;
+		}
+
+		header small {
+			font-size: .75rem;
+			opacity: .8;
+			display: block;
+		}
+
+		.container {
+			max-width: 700px;
+			margin: 0 auto;
+			padding: 16px;
+			display: flex;
+			flex-direction: column;
+			gap: 14px;
+		}
+
+		.card {
+			background: white;
+			border-radius: var(--radius);
+			box-shadow: var(--shadow);
+			padding: 16px;
+		}
+
+		/* ── Location card ── */
+		.location-card {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.location-bar {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.location-icon {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background: var(--blue-light);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.location-text { flex: 1; min-width: 0; }
+
+		.location-text strong {
+			display: block;
+			font-size: .9rem;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.location-text small {
+			color: var(--gray-600);
+			font-size: .75rem;
+		}
+
+		.btn-icon {
+			background: none;
+			border: none;
+			cursor: pointer;
+			padding: 8px;
+			border-radius: 50%;
+			color: var(--blue);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: background .15s;
+			flex-shrink: 0;
+		}
+
+		.btn-icon:hover { background: var(--blue-light); }
+		.btn-icon:disabled { opacity: .4; cursor: default; }
+
+		/* Address search */
+		.address-search {
+			display: flex;
+			gap: 6px;
+			position: relative;
+		}
+
+		.address-search input {
+			flex: 1;
+			border: 1.5px solid var(--gray-200);
+			border-radius: 8px;
+			padding: 8px 12px;
+			font-size: .88rem;
+			outline: none;
+			transition: border-color .15s;
+			font-family: inherit;
+		}
+
+		.address-search input:focus { border-color: var(--blue); }
+
+		.address-search button {
+			background: var(--blue);
+			color: white;
+			border: none;
+			border-radius: 8px;
+			padding: 8px 14px;
+			font-size: .82rem;
+			font-weight: 600;
+			cursor: pointer;
+			white-space: nowrap;
+			transition: background .15s;
+		}
+
+		.address-search button:hover { background: var(--blue-dark); }
+		.address-search button:disabled { opacity: .5; cursor: default; }
+
+		.autocomplete-list {
+			position: absolute;
+			top: calc(100% + 4px);
+			left: 0;
+			right: 0;
+			background: white;
+			border: 1.5px solid var(--gray-200);
+			border-radius: 8px;
+			box-shadow: var(--shadow);
+			z-index: 100;
+			overflow: hidden;
+		}
+
+		.autocomplete-list button {
+			display: block;
+			width: 100%;
+			text-align: left;
+			padding: 10px 12px;
+			border: none;
+			background: none;
+			cursor: pointer;
+			font-size: .85rem;
+			font-family: inherit;
+			color: var(--gray-800);
+			border-bottom: 1px solid var(--gray-200);
+			transition: background .1s;
+		}
+
+		.autocomplete-list button:last-child { border-bottom: none; }
+		.autocomplete-list button:hover { background: var(--blue-light); }
+
+		/* ── Controls card ── */
+		.controls { display: flex; flex-direction: column; gap: 14px; }
+
+		.fuel-tabs {
+			display: flex;
+			gap: 6px;
+			flex-wrap: wrap;
+		}
+
+		.fuel-tab {
+			flex: 1;
+			min-width: 80px;
+			padding: 8px 4px;
+			border: 2px solid var(--gray-200);
+			background: white;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: .82rem;
+			font-weight: 500;
+			text-align: center;
+			transition: all .15s;
+			color: var(--gray-600);
+			font-family: inherit;
+		}
+
+		.fuel-tab:hover { border-color: var(--blue); color: var(--blue); }
+
+		.fuel-tab.active {
+			border-color: var(--blue);
+			background: var(--blue);
+			color: white;
+		}
+
+		.radius-row {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.radius-row label {
+			font-size: .85rem;
+			font-weight: 500;
+			white-space: nowrap;
+		}
+
+		input[type="range"] {
+			flex: 1;
+			accent-color: var(--blue);
+			height: 4px;
+		}
+
+		.radius-value {
+			font-size: .85rem;
+			font-weight: 700;
+			color: var(--blue);
+			min-width: 42px;
+			text-align: right;
+		}
+
+		/* ── Status ── */
+		.status {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 14px 16px;
+			border-radius: var(--radius);
+			font-size: .9rem;
+		}
+
+		.status.info { background: var(--blue-light); color: var(--blue-dark); }
+		.status.error { background: #fdecea; color: #b71c1c; }
+		.status.loading { background: var(--gray-100); color: var(--gray-600); }
+
+		.spinner {
+			width: 20px;
+			height: 20px;
+			border: 3px solid var(--gray-400);
+			border-top-color: var(--blue);
+			border-radius: 50%;
+			animation: spin .7s linear infinite;
+			flex-shrink: 0;
+		}
+
+		@keyframes spin { to { transform: rotate(360deg); } }
+
+		/* ── Results ── */
+		.results-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 12px;
+		}
+
+		.results-header h2 {
+			font-size: .95rem;
+			font-weight: 600;
+			color: var(--gray-600);
+		}
+
+		.results-header span {
+			font-size: .8rem;
+			color: var(--gray-600);
+		}
+
+		.station-list {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.station-card {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			grid-template-rows: auto auto;
+			gap: 2px 8px;
+			padding: 12px 14px;
+			border-radius: 8px;
+			border: 1.5px solid var(--gray-200);
+			background: white;
+		}
+
+		.station-card:first-child {
+			border-color: var(--green);
+			background: var(--green-light);
+		}
+
+		.station-card:first-child .station-price { color: var(--green); }
+
+		.station-name {
+			font-size: .88rem;
+			font-weight: 600;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.station-price {
+			font-size: 1.25rem;
+			font-weight: 800;
+			color: var(--blue);
+			grid-row: 1 / 3;
+			align-self: center;
+			text-align: right;
+			letter-spacing: -.5px;
+		}
+
+		.station-meta {
+			font-size: .76rem;
+			color: var(--gray-600);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.brand-chip {
+			display: inline-block;
+			background: var(--gray-200);
+			border-radius: 4px;
+			padding: 0 5px;
+			font-size: .7rem;
+			font-weight: 600;
+			margin-right: 4px;
+			vertical-align: middle;
+		}
+
+		.station-card:first-child .brand-chip { background: rgba(0,0,0,.12); }
+
+		.freshness {
+			text-align: center;
+			font-size: .72rem;
+			color: var(--gray-600);
+			padding-top: 4px;
+		}
+
+		/* "Tous" multi-price layout */
+		.prices-row {
+			display: flex;
+			gap: 6px;
+			grid-column: 2;
+			grid-row: 1 / 3;
+			align-items: center;
+		}
+
+		.price-pill {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 1px;
+		}
+
+		.price-pill .label {
+			font-size: .6rem;
+			color: var(--gray-600);
+			text-transform: uppercase;
+			letter-spacing: .3px;
+		}
+
+		.price-pill .amount {
+			font-size: .92rem;
+			font-weight: 700;
+			color: var(--blue);
+		}
+
+		.price-pill .amount.na {
+			font-size: .75rem;
+			color: var(--gray-400);
+			font-weight: 400;
+		}
+
+		.station-card:first-child .price-pill .label { color: rgba(0,0,0,.55); }
+		.station-card:first-child .price-pill .amount { color: var(--green); }
+
+		@media (max-width: 400px) {
+			.fuel-tab { font-size: .75rem; }
+		}
+	</style>
+</head>
+<body>
+
+<header>
+	<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+		<circle cx="16" cy="16" r="16" fill="white" fill-opacity=".15"/>
+		<path d="M10 26V10a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4l2 2v6a1 1 0 0 1-2 0v-5l-1-1V26H10z" fill="white"/>
+		<rect x="12" y="11" width="8" height="4" rx="1" fill="#095797"/>
+		<circle cx="22" cy="12" r="1.5" fill="#f9a825"/>
+	</svg>
+	<div>
+		<h1>Prix essence — Québec</h1>
+		<small>Données : Régie de l'énergie</small>
+	</div>
+</header>
+
+<div class="container">
+
+	<!-- Location card -->
+	<div class="card location-card">
+		<div class="location-bar">
+			<div class="location-icon">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#095797" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+					<circle cx="12" cy="10" r="3"/>
+				</svg>
+			</div>
+			<div class="location-text">
+				<strong id="locationLabel">Localisation en cours…</strong>
+				<small id="locationSub">Autorisation requise</small>
+			</div>
+			<button class="btn-icon" id="gpsBtn" title="Utiliser le GPS" disabled>
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="3"/>
+					<path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+					<circle cx="12" cy="12" r="9" stroke-dasharray="2 3"/>
+				</svg>
+			</button>
+		</div>
+
+		<!-- Address search fallback -->
+		<div class="address-search" id="addressSearchRow">
+			<input type="text" id="addressInput" placeholder="Entrez une adresse ou une ville…" autocomplete="off" spellcheck="false">
+			<button id="addressSearchBtn">Chercher</button>
+			<div class="autocomplete-list" id="autocompleteList" hidden></div>
+		</div>
+	</div>
+
+	<!-- Controls card -->
+	<div class="card controls">
+		<div class="fuel-tabs">
+			<button class="fuel-tab active" data-fuel="Régulier">Régulier</button>
+			<button class="fuel-tab" data-fuel="Super">Super</button>
+			<button class="fuel-tab" data-fuel="Diesel">Diesel</button>
+			<button class="fuel-tab" data-fuel="Tous">Tous</button>
+		</div>
+		<div class="radius-row">
+			<label for="radiusSlider">Rayon :</label>
+			<input type="range" id="radiusSlider" min="1" max="25" value="10" step="1">
+			<span class="radius-value" id="radiusValue">10 km</span>
+		</div>
+	</div>
+
+	<!-- Status / Results -->
+	<div id="statusArea"></div>
+	<div id="resultsArea"></div>
+
+</div>
+
+<script>
+(function () {
+	'use strict';
+
+	const GEOJSON_URL = 'https://regieessencequebec.ca/stations.geojson.gz';
+	const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
+	const FUEL_LABELS = { 'Régulier': 'Rég.', 'Super': 'Super', 'Diesel': 'Dies.' };
+
+	let userLat = null;
+	let userLon = null;
+	let locationLabel = null;
+	let stationsData = null;
+	let metadata = null;
+	let activeFuel = 'Régulier';
+	let activeRadius = 10;
+	let gpsWatchId = null;
+	let searchDebounce = null;
+
+	const $ = id => document.getElementById(id);
+
+	// ── Haversine distance in km ──
+	function distanceKm(lat1, lon1, lat2, lon2) {
+		const R = 6371;
+		const dLat = (lat2 - lat1) * Math.PI / 180;
+		const dLon = (lon2 - lon1) * Math.PI / 180;
+		const a = Math.sin(dLat / 2) ** 2 +
+		          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+		          Math.sin(dLon / 2) ** 2;
+		return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	}
+
+	// ── Parse "199.9¢" → 199.9 ──
+	function parsePrice(str) {
+		if (!str) { return null; }
+		const n = parseFloat(str.replace(/[^\d.]/g, ''));
+		return isNaN(n) ? null : n;
+	}
+
+	function formatPrice(cents) {
+		return cents !== null ? cents.toFixed(1) + '¢' : null;
+	}
+
+	function esc(str) {
+		return String(str ?? '')
+			.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	}
+
+	// ── Status UI ──
+	const ICON_INFO = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+	const ICON_ERR  = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+
+	function showStatus(html, type) {
+		$('statusArea').innerHTML = `<div class="status ${type}">${html}</div>`;
+	}
+	function clearStatus() { $('statusArea').innerHTML = ''; }
+
+	// ── Set user position ──
+	function applyPosition(lat, lon, label) {
+		userLat = lat;
+		userLon = lon;
+		locationLabel = label;
+		$('locationLabel').textContent = label;
+		$('locationSub').textContent = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		if (stationsData) {
+			clearStatus();
+			renderResults();
+		} else {
+			loadStations();
+		}
+	}
+
+	// ── GPS ──
+	function startGPS() {
+		if (!navigator.geolocation) { return; }
+
+		$('locationLabel').textContent = 'GPS en cours…';
+		$('locationSub').textContent = 'Veuillez autoriser la géolocalisation.';
+		$('gpsBtn').disabled = true;
+
+		if (gpsWatchId !== null) {
+			navigator.geolocation.clearWatch(gpsWatchId);
+		}
+
+		gpsWatchId = navigator.geolocation.watchPosition(
+			pos => {
+				$('gpsBtn').disabled = false;
+				applyPosition(pos.coords.latitude, pos.coords.longitude,
+					`GPS (±${Math.round(pos.coords.accuracy)} m)`);
+			},
+			err => {
+				$('gpsBtn').disabled = false;
+				const msgs = {
+					1: 'GPS refusé — utilisez la recherche ci-dessous.',
+					2: 'Position GPS indisponible — utilisez la recherche.',
+					3: 'Délai GPS dépassé — utilisez la recherche.'
+				};
+				$('locationLabel').textContent = 'GPS indisponible';
+				$('locationSub').textContent = msgs[err.code] || 'Erreur GPS.';
+				// Don't show a big error; the address box is right there
+			},
+			{ enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+		);
+	}
+
+	// ── Address search (Nominatim) ──
+	async function searchAddress(query) {
+		if (!query.trim()) { return []; }
+		const params = new URLSearchParams({
+			q: query,
+			format: 'json',
+			limit: '5',
+			countrycodes: 'ca',
+			'accept-language': 'fr'
+		});
+		const res = await fetch(`${NOMINATIM_URL}?${params}`, {
+			headers: { 'Accept-Language': 'fr' }
+		});
+		if (!res.ok) { throw new Error('HTTP ' + res.status); }
+		return res.json();
+	}
+
+	function showAutocomplete(results) {
+		const list = $('autocompleteList');
+		if (!results.length) {
+			list.hidden = true;
+			return;
+		}
+		list.innerHTML = results.map((r, i) =>
+			`<button type="button" data-idx="${i}">${esc(r.display_name)}</button>`
+		).join('');
+		list._results = results;
+		list.hidden = false;
+	}
+
+	function hideAutocomplete() {
+		$('autocompleteList').hidden = true;
+	}
+
+	$('addressInput').addEventListener('input', () => {
+		clearTimeout(searchDebounce);
+		const q = $('addressInput').value;
+		if (q.length < 3) { hideAutocomplete(); return; }
+		searchDebounce = setTimeout(async () => {
+			try {
+				const results = await searchAddress(q);
+				showAutocomplete(results);
+			} catch (_) {
+				hideAutocomplete();
+			}
+		}, 350);
+	});
+
+	$('addressInput').addEventListener('keydown', e => {
+		if (e.key === 'Enter') { doAddressSearch(); }
+	});
+
+	$('autocompleteList').addEventListener('click', e => {
+		const btn = e.target.closest('button[data-idx]');
+		if (!btn) { return; }
+		const r = $('autocompleteList')._results[+btn.dataset.idx];
+		hideAutocomplete();
+		$('addressInput').value = r.display_name;
+		applyPosition(+r.lat, +r.lon, r.display_name.split(',')[0].trim());
+	});
+
+	document.addEventListener('click', e => {
+		if (!$('addressSearchRow').contains(e.target)) { hideAutocomplete(); }
+	});
+
+	async function doAddressSearch() {
+		const q = $('addressInput').value.trim();
+		if (!q) { return; }
+		hideAutocomplete();
+		$('addressSearchBtn').disabled = true;
+		$('addressSearchBtn').textContent = '…';
+		try {
+			const results = await searchAddress(q);
+			if (!results.length) {
+				$('locationLabel').textContent = 'Adresse introuvable';
+				$('locationSub').textContent = 'Essayez un autre terme.';
+			} else {
+				const r = results[0];
+				$('addressInput').value = r.display_name;
+				applyPosition(+r.lat, +r.lon, r.display_name.split(',')[0].trim());
+			}
+		} catch (err) {
+			$('locationLabel').textContent = 'Erreur de recherche';
+			$('locationSub').textContent = err.message;
+		} finally {
+			$('addressSearchBtn').disabled = false;
+			$('addressSearchBtn').textContent = 'Chercher';
+		}
+	}
+
+	$('addressSearchBtn').addEventListener('click', doAddressSearch);
+
+	// ── GPS button ──
+	$('gpsBtn').addEventListener('click', () => {
+		$('gpsBtn').disabled = true;
+		startGPS();
+	});
+
+	// ── Fetch stations ──
+	async function loadStations() {
+		showStatus('<div class="spinner"></div><span>Chargement des stations…</span>', 'loading');
+		try {
+			const json = await fetch(GEOJSON_URL, { cache: 'no-cache' }).then(r => {
+				if (!r.ok) { throw new Error('HTTP ' + r.status); }
+				return r.json();
+			});
+			metadata = json.metadata || null;
+			stationsData = json.features || [];
+			clearStatus();
+			renderResults();
+		} catch (err) {
+			showStatus(`${ICON_ERR}<span>Erreur de chargement : ${esc(err.message)}</span>`, 'error');
+		}
+	}
+
+	// ── Render results ──
+	function renderResults() {
+		if (!stationsData || userLat === null) { return; }
+
+		const candidates = [];
+		for (const feature of stationsData) {
+			const [lon, lat] = feature.geometry.coordinates;
+			const dist = distanceKm(userLat, userLon, lat, lon);
+			if (dist > activeRadius) { continue; }
+
+			const props = feature.properties;
+			const prices = props.Prices || [];
+
+			if (activeFuel === 'Tous') {
+				const priceMap = {};
+				for (const p of prices) {
+					if (p.IsAvailable) { priceMap[p.GasType] = parsePrice(p.Price); }
+				}
+				if (!Object.keys(priceMap).length) { continue; }
+				const vals = Object.values(priceMap).filter(v => v !== null);
+				candidates.push({ props, dist, priceMap, sortKey: vals.length ? Math.min(...vals) : Infinity });
+			} else {
+				const entry = prices.find(p => p.GasType === activeFuel && p.IsAvailable);
+				if (!entry) { continue; }
+				const price = parsePrice(entry.Price);
+				if (price === null) { continue; }
+				candidates.push({ props, dist, price, sortKey: price });
+			}
+		}
+
+		candidates.sort((a, b) => a.sortKey - b.sortKey || a.dist - b.dist);
+
+		if (!candidates.length) {
+			$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}Aucune station trouvée dans un rayon de ${activeRadius} km.</div>`;
+			return;
+		}
+
+		const genCard = c => {
+			const { props, dist } = c;
+			const brand = props.brand ? `<span class="brand-chip">${esc(props.brand)}</span>` : '';
+			const distStr = dist < 1 ? (dist * 1000).toFixed(0) + ' m' : dist.toFixed(1) + ' km';
+
+			let priceHtml;
+			if (activeFuel === 'Tous') {
+				const pills = ['Régulier', 'Super', 'Diesel'].map(ft => {
+					const v = c.priceMap[ft];
+					return `<div class="price-pill">
+						<span class="label">${FUEL_LABELS[ft]}</span>
+						<span class="${v !== null ? 'amount' : 'amount na'}">${v !== null ? formatPrice(v) : '—'}</span>
+					</div>`;
+				}).join('');
+				priceHtml = `<div class="prices-row">${pills}</div>`;
+			} else {
+				priceHtml = `<span class="station-price">${formatPrice(c.price)}</span>`;
+			}
+
+			return `<div class="station-card">
+				<span class="station-name">${brand}${esc(props.Name)}</span>
+				${priceHtml}
+				<span class="station-meta">${esc(props.Address)} · ${distStr}</span>
+			</div>`;
+		};
+
+		const updatedAt = metadata
+			? new Date(metadata.generated_at).toLocaleString('fr-CA', { dateStyle: 'short', timeStyle: 'short' })
+			: '';
+
+		$('resultsArea').innerHTML = `
+			<div class="card">
+				<div class="results-header">
+					<h2>${candidates.length} station${candidates.length > 1 ? 's' : ''} — ${activeFuel !== 'Tous' ? activeFuel : 'Tous types'}</h2>
+					<span>${activeRadius} km</span>
+				</div>
+				<div class="station-list">${candidates.map(genCard).join('')}</div>
+				${updatedAt ? `<p class="freshness">Mise à jour : ${updatedAt}</p>` : ''}
+			</div>`;
+	}
+
+	// ── Controls ──
+	document.querySelectorAll('.fuel-tab').forEach(btn => {
+		btn.addEventListener('click', () => {
+			document.querySelectorAll('.fuel-tab').forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			activeFuel = btn.dataset.fuel;
+			renderResults();
+		});
+	});
+
+	$('radiusSlider').addEventListener('input', () => {
+		activeRadius = parseInt($('radiusSlider').value, 10);
+		$('radiusValue').textContent = activeRadius + ' km';
+		renderResults();
+	});
+
+	// ── Boot: try GPS, address bar is always available ──
+	if (navigator.geolocation) {
+		$('gpsBtn').disabled = false;
+		startGPS();
+	} else {
+		$('locationLabel').textContent = 'GPS non disponible';
+		$('locationSub').textContent = 'Utilisez la recherche d\'adresse.';
+	}
+})();
+</script>
+
+</body>
+</html>

@@ -663,7 +663,9 @@
 	const RADIUS_STORAGE_KEY = 'gaz_radius_v1';
 	const DETOUR_STORAGE_KEY = 'gaz_detour_v1';
 	const MAX_RADIUS_KM = 25;
-	const MAX_DETOUR_KM = 5;
+	const MAX_DETOUR_KM = 2.5;
+	const DETOUR_STEP_KM = 0.25;
+	const MIN_DETOUR_KM = 0.25;
 	const ROAD_BUFFER = 1.5;
 	const MAX_CANDIDATES = 100;
 	const MAX_RESULTS = 20;
@@ -708,7 +710,7 @@
 			routeError: 'Impossible de calculer l\'itinéraire : {msg}',
 			enterOD: 'Entrez un point de départ et une destination.',
 			noStationsNearby: 'Aucune station trouvée (rayon de {val} km).',
-			noStationsTrip: 'Aucune station trouvée (détour de {val} km).',
+			noStationsTrip: 'Aucune station trouvée (détour de {val}).',
 			noFavs: 'Aucune station favorite. Ajoutez-en avec l\'étoile ⭐ sur les autres onglets.',
 			stationCount: '{n} station — {fuel}',
 			stationCountPlural: '{n} stations — {fuel}',
@@ -721,7 +723,7 @@
 			detourPrefix: 'détour',
 			fromStart: 'du départ',
 			distanceUnknown: 'distance inconnue',
-			detourMaxLabel: 'détour ≤ {d} km · trajet {m}',
+			detourMaxLabel: 'détour ≤ {d} · trajet {m}',
 			radiusMeta: '{r} km · {mode}',
 			favMetaWithDist: '{d}{dur}',
 			favMetaNoDist: 'favori',
@@ -769,7 +771,7 @@
 			routeError: 'Unable to compute route: {msg}',
 			enterOD: 'Enter an origin and a destination.',
 			noStationsNearby: 'No station found (radius of {val} km).',
-			noStationsTrip: 'No station found (detour of {val} km).',
+			noStationsTrip: 'No station found (detour of {val}).',
 			noFavs: 'No favorite stations. Add some with the ⭐ star on the other tabs.',
 			stationCount: '{n} station — {fuel}',
 			stationCountPlural: '{n} stations — {fuel}',
@@ -782,7 +784,7 @@
 			detourPrefix: 'detour',
 			fromStart: 'from start',
 			distanceUnknown: 'distance unknown',
-			detourMaxLabel: 'detour ≤ {d} km · route {m}',
+			detourMaxLabel: 'detour ≤ {d} · route {m}',
 			radiusMeta: '{r} km · {mode}',
 			favMetaWithDist: '{d}{dur}',
 			favMetaNoDist: 'favorite',
@@ -813,7 +815,7 @@
 	let stationsData = null, metadata = null;
 	let activeFuel = 'Régulier';
 	let activeRadius = clamp(parseInt(localStorage.getItem(RADIUS_STORAGE_KEY), 10) || 5, 1, MAX_RADIUS_KM);
-	let activeDetour = clamp(parseInt(localStorage.getItem(DETOUR_STORAGE_KEY), 10) || 1, 1, MAX_DETOUR_KM);
+	let activeDetour = clamp(parseFloat(localStorage.getItem(DETOUR_STORAGE_KEY)) || 0.5, MIN_DETOUR_KM, MAX_DETOUR_KM);
 	let gpsWatchId = null;
 	let originFromGPS = false; // false once user manually picks an origin
 	let nearbyCache = null;
@@ -1407,15 +1409,20 @@
 			$('sliderRow').classList.add('hidden');
 		} else {
 			$('sliderRow').classList.remove('hidden');
+			const slider = $('sliderMain');
 			if (mode === 'trip') {
 				$('sliderLabel').textContent = t('detourLabel');
-				$('sliderMain').max = MAX_DETOUR_KM;
-				$('sliderMain').value = activeDetour;
-				$('sliderValue').textContent = activeDetour + ' km';
+				slider.min = MIN_DETOUR_KM;
+				slider.max = MAX_DETOUR_KM;
+				slider.step = DETOUR_STEP_KM;
+				slider.value = activeDetour;
+				$('sliderValue').textContent = formatDistance(activeDetour * 1000);
 			} else {
 				$('sliderLabel').textContent = t('radiusLabel');
-				$('sliderMain').max = MAX_RADIUS_KM;
-				$('sliderMain').value = activeRadius;
+				slider.min = 1;
+				slider.max = MAX_RADIUS_KM;
+				slider.step = 1;
+				slider.value = activeRadius;
 				$('sliderValue').textContent = activeRadius + ' km';
 			}
 		}
@@ -1432,15 +1439,15 @@
 	});
 
 	$('sliderMain').addEventListener('input', () => {
-		const v = parseInt($('sliderMain').value, 10);
 		if (mode === 'trip') {
-			activeDetour = v;
-			localStorage.setItem(DETOUR_STORAGE_KEY, String(v));
+			activeDetour = parseFloat($('sliderMain').value);
+			localStorage.setItem(DETOUR_STORAGE_KEY, String(activeDetour));
+			$('sliderValue').textContent = formatDistance(activeDetour * 1000);
 		} else if (mode === 'nearby') {
-			activeRadius = v;
-			localStorage.setItem(RADIUS_STORAGE_KEY, String(v));
+			activeRadius = parseInt($('sliderMain').value, 10);
+			localStorage.setItem(RADIUS_STORAGE_KEY, String(activeRadius));
+			$('sliderValue').textContent = activeRadius + ' km';
 		}
-		$('sliderValue').textContent = v + ' km';
 		renderResults();
 	});
 
@@ -1525,14 +1532,17 @@
 				return;
 			}
 			candidates = buildTripCandidates(cache);
-			headerRight = t('detourMaxLabel', { d: activeDetour, m: formatDistance(cache.totalM) });
+			headerRight = t('detourMaxLabel', {
+				d: formatDistance(activeDetour * 1000),
+				m: formatDistance(cache.totalM)
+			});
 		}
 
 		if (!candidates.length) {
 			if (mode === 'nearby') {
 				$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('noStationsNearby', { val: activeRadius })}</span></div>`;
 			} else if (mode === 'trip') {
-				$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('noStationsTrip', { val: activeDetour })}</span></div>`;
+				$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('noStationsTrip', { val: formatDistance(activeDetour * 1000) })}</span></div>`;
 			} else {
 				$('resultsArea').innerHTML = `<div class="status info">${ICON_INFO}<span>${t('noFavs')}</span></div>`;
 			}
@@ -1641,7 +1651,10 @@
 				subtitle: `${detourStr} · ${alongStr}`
 			});
 		}
-		out.sort((a, b) => a.sortKey - b.sortKey || a.alongRouteM - b.alongRouteM);
+		out.sort((a, b) =>
+			a.sortKey - b.sortKey
+			|| a.distM - b.distM
+			|| a.alongRouteM - b.alongRouteM);
 		return out.slice(0, MAX_RESULTS);
 	}
 

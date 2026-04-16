@@ -660,6 +660,8 @@
 	const FAV_STORAGE_KEY = 'gaz_favorites_v1';
 	const LANG_STORAGE_KEY = 'gaz_lang_v1';
 	const PLACES_STORAGE_KEY = 'gaz_places_v1';
+	const RADIUS_STORAGE_KEY = 'gaz_radius_v1';
+	const DETOUR_STORAGE_KEY = 'gaz_detour_v1';
 	const MAX_RADIUS_KM = 25;
 	const MAX_DETOUR_KM = 5;
 	const ROAD_BUFFER = 1.5;
@@ -810,8 +812,8 @@
 	let destLat = null, destLon = null;
 	let stationsData = null, metadata = null;
 	let activeFuel = 'Régulier';
-	let activeRadius = 10;
-	let activeDetour = 2;
+	let activeRadius = clamp(parseInt(localStorage.getItem(RADIUS_STORAGE_KEY), 10) || 5, 1, MAX_RADIUS_KM);
+	let activeDetour = clamp(parseInt(localStorage.getItem(DETOUR_STORAGE_KEY), 10) || 1, 1, MAX_DETOUR_KM);
 	let gpsWatchId = null;
 	let originFromGPS = false; // false once user manually picks an origin
 	let nearbyCache = null;
@@ -830,6 +832,7 @@
 	function savePlaces() { localStorage.setItem(PLACES_STORAGE_KEY, JSON.stringify(places)); }
 
 	const $ = id => document.getElementById(id);
+	function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
 	// ── Geometry ──
 	function distanceKm(lat1, lon1, lat2, lon2) {
@@ -1430,8 +1433,13 @@
 
 	$('sliderMain').addEventListener('input', () => {
 		const v = parseInt($('sliderMain').value, 10);
-		if (mode === 'trip') { activeDetour = v; }
-		else if (mode === 'nearby') { activeRadius = v; }
+		if (mode === 'trip') {
+			activeDetour = v;
+			localStorage.setItem(DETOUR_STORAGE_KEY, String(v));
+		} else if (mode === 'nearby') {
+			activeRadius = v;
+			localStorage.setItem(RADIUS_STORAGE_KEY, String(v));
+		}
 		$('sliderValue').textContent = v + ' km';
 		renderResults();
 	});

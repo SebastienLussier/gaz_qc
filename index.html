@@ -530,6 +530,25 @@
 
 		.hidden { display: none !important; }
 
+		.app-footer {
+			text-align: center;
+			padding: 12px 16px 24px;
+			color: var(--gray-600);
+			font-size: .72rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 5px;
+		}
+
+		.app-footer svg {
+			width: 12px;
+			height: 12px;
+			flex-shrink: 0;
+		}
+
+		.app-footer.hidden { display: none; }
+
 		@media (max-width: 420px) {
 			.fuel-tab { font-size: .75rem; min-width: 68px; }
 			.mode-tab { font-size: .78rem; padding: 8px 4px; }
@@ -646,6 +665,11 @@
 
 	<div id="statusArea"></div>
 	<div id="resultsArea"></div>
+
+	<div class="app-footer hidden" id="appFooter">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+		<span id="visitorCount">—</span>
+	</div>
 
 </div>
 
@@ -1784,6 +1808,25 @@
 		$('originLabel').textContent = t('gpsNotAvailable');
 		$('originSub').textContent = t('useAddressSearch');
 	}
+
+	// ── Visitor counter (counterapi.dev, once per tab) ──
+	(async () => {
+		try {
+			const KEY = 'gaz_visit_counted_v1';
+			const countedThisSession = sessionStorage.getItem(KEY);
+			const endpoint = countedThisSession
+				? 'https://api.counterapi.dev/v1/gaz-prix-qc/visits'
+				: 'https://api.counterapi.dev/v1/gaz-prix-qc/visits/up';
+			const res = await fetch(endpoint);
+			if (!res.ok) { return; }
+			const data = await res.json();
+			if (typeof data.count !== 'number') { return; }
+			$('visitorCount').textContent = data.count.toLocaleString(
+				currentLang === 'fr' ? 'fr-CA' : 'en-CA');
+			$('appFooter').classList.remove('hidden');
+			sessionStorage.setItem(KEY, '1');
+		} catch (_) { /* silent: counter is non-essential */ }
+	})();
 })();
 </script>
 

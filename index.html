@@ -1223,20 +1223,20 @@
 	}
 
 	// ── Apply origin/destination ──
-	async function applyOrigin(lat, lon, label) {
+	async function applyOrigin(lat, lon, label, sub) {
 		originLat = lat;
 		originLon = lon;
 		$('originLabel').textContent = label;
-		$('originSub').textContent = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		$('originSub').textContent = sub !== undefined ? sub : `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
 		await ensureStationsLoaded();
 		await triggerCompute();
 	}
 
-	async function applyDestination(lat, lon, label) {
+	async function applyDestination(lat, lon, label, sub) {
 		destLat = lat;
 		destLon = lon;
 		$('destLabel').textContent = label;
-		$('destSub').textContent = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		$('destSub').textContent = sub !== undefined ? sub : `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
 		if (mode === 'trip') { await triggerCompute(); }
 	}
 
@@ -1400,11 +1400,11 @@
 			if (!p) { return; }
 			if (role === 'origin') {
 				originFromGPS = false;
-				$('originInput').value = p.name;
-				applyOrigin(p.lat, p.lon, p.name);
+				$('originInput').value = '';
+				applyOrigin(p.lat, p.lon, p.name, '');
 			} else {
-				$('destInput').value = p.name;
-				applyDestination(p.lat, p.lon, p.name);
+				$('destInput').value = '';
+				applyDestination(p.lat, p.lon, p.name, '');
 			}
 		}
 	}

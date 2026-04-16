@@ -903,7 +903,8 @@
 	function formatDistance(m) {
 		if (m === null || m === undefined) { return '—'; }
 		if (m < 1000) { return Math.round(m) + ' m'; }
-		return (m / 1000).toFixed(1) + ' km';
+		const km = (m / 1000).toFixed(2).replace(/\.?0+$/, '');
+		return km + ' km';
 	}
 
 	function formatDuration(s) {

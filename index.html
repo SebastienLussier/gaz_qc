@@ -58,6 +58,30 @@
 			flex-shrink: 0;
 		}
 
+		.fuel-select {
+			background: rgba(255,255,255,.12);
+			color: white;
+			border: none;
+			border-radius: 6px;
+			padding: 6px 26px 6px 10px;
+			font-size: .78rem;
+			font-weight: 700;
+			cursor: pointer;
+			font-family: inherit;
+			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+			background-repeat: no-repeat;
+			background-position: right 8px center;
+			flex-shrink: 0;
+			transition: background-color .15s;
+		}
+
+		.fuel-select:hover { background-color: rgba(255,255,255,.22); }
+		.fuel-select:focus { outline: 2px solid rgba(255,255,255,.3); outline-offset: 1px; }
+		.fuel-select option { color: var(--gray-800); background: white; font-weight: 500; }
+
 		.lang-btn {
 			background: none;
 			color: white;
@@ -393,7 +417,6 @@
 		.station-card.is-best:hover { border-color: var(--green); }
 		.station-card.is-best .station-price { color: var(--green); }
 		.station-card.is-best .dir-arrow { color: var(--green); }
-		.station-card.is-best .brand-chip { background: rgba(0,0,0,.12); }
 		.station-card.is-best .price-pill .label { color: rgba(0,0,0,.55); }
 		.station-card.is-best .price-pill .amount { color: var(--green); }
 
@@ -464,13 +487,40 @@
 		.brand-chip {
 			display: inline-block;
 			background: var(--gray-200);
+			color: var(--gray-800);
 			border-radius: 4px;
-			padding: 0 5px;
+			padding: 1px 6px;
 			font-size: .7rem;
-			font-weight: 600;
+			font-weight: 700;
 			margin-right: 4px;
 			vertical-align: middle;
+			letter-spacing: .2px;
 		}
+
+		/* Brand colors — approximate from official branding */
+		.brand-chip[data-brand="Shell"] { background: #FFCB00; color: #DD1D21; }
+		.brand-chip[data-brand="Esso"] { background: #CE1126; color: #FFFFFF; }
+		.brand-chip[data-brand="Petro-Canada"] { background: #BF0A30; color: #FFDF00; }
+		.brand-chip[data-brand="Ultramar"] { background: #0075A8; color: #FFFFFF; }
+		.brand-chip[data-brand="Irving"] { background: #00853F; color: #FFDF00; }
+		.brand-chip[data-brand="Couche-Tard"] { background: #E30613; color: #FFFFFF; }
+		.brand-chip[data-brand="Sonic"] { background: #00448F; color: #FFFFFF; }
+		.brand-chip[data-brand="Crevier"] { background: #E30613; color: #FFFFFF; }
+		.brand-chip[data-brand="Mobil"] { background: #E3192E; color: #FFFFFF; }
+		.brand-chip[data-brand="Costco"] { background: #005DAA; color: #E31837; }
+		.brand-chip[data-brand="Canadian Tire"] { background: #ED1C24; color: #FFFFFF; }
+		.brand-chip[data-brand="Harnois"] { background: #F7941D; color: #FFFFFF; }
+		.brand-chip[data-brand="Quickie"] { background: #F7941D; color: #FFFFFF; }
+		.brand-chip[data-brand="Pétro-T"],
+		.brand-chip[data-brand="Petro-T"] { background: #1C2E4A; color: #FFFFFF; }
+		.brand-chip[data-brand="MacEwen"] { background: #E31837; color: #FFFFFF; }
+		.brand-chip[data-brand="Stinson"] { background: #003087; color: #FFFFFF; }
+		.brand-chip[data-brand="Pioneer"] { background: #E31837; color: #FFFFFF; }
+		.brand-chip[data-brand="Olco"] { background: #004B8D; color: #FFFFFF; }
+		.brand-chip[data-brand="Sunoco"] { background: #005EB8; color: #FFCC00; }
+		.brand-chip[data-brand="Beausoir"] { background: #1E4D8C; color: #FFFFFF; }
+		.brand-chip[data-brand="Eko"] { background: #003DA5; color: #FFED00; }
+		.brand-chip[data-brand="Paddock"] { background: #D52B1E; color: #FFFFFF; }
 
 		.badge {
 			font-size: .65rem;
@@ -569,6 +619,12 @@
 		<h1 data-i18n="appTitle">Prix essence — Québec</h1>
 		<small data-i18n="appSubtitle">Données : Régie de l'énergie</small>
 	</div>
+	<select class="fuel-select" id="fuelSelect" data-i18n-title="fuelLabel" title="Type de carburant">
+		<option value="Régulier" data-i18n="fuelRegular">Régulier</option>
+		<option value="Super" data-i18n="fuelSuper">Super</option>
+		<option value="Diesel" data-i18n="fuelDiesel">Diesel</option>
+		<option value="Tous" data-i18n="fuelAll">Tous</option>
+	</select>
 	<div class="lang-switcher">
 		<button class="lang-btn active" data-lang="fr">FR</button>
 		<button class="lang-btn" data-lang="en">EN</button>
@@ -650,12 +706,6 @@
 
 	<!-- Controls card -->
 	<div class="card controls" id="controlsCard">
-		<div class="fuel-tabs">
-			<button class="fuel-tab active" data-fuel="Régulier" data-i18n="fuelRegular">Régulier</button>
-			<button class="fuel-tab" data-fuel="Super" data-i18n="fuelSuper">Super</button>
-			<button class="fuel-tab" data-fuel="Diesel" data-i18n="fuelDiesel">Diesel</button>
-			<button class="fuel-tab" data-fuel="Tous" data-i18n="fuelAll">Tous</button>
-		</div>
 		<div class="slider-row" id="sliderRow">
 			<label for="sliderMain" id="sliderLabel" data-i18n="radiusLabel">Rayon :</label>
 			<input type="range" id="sliderMain" min="1" max="25" value="10" step="1">
@@ -686,6 +736,7 @@
 	const PLACES_STORAGE_KEY = 'gaz_places_v1';
 	const RADIUS_STORAGE_KEY = 'gaz_radius_v1';
 	const DETOUR_STORAGE_KEY = 'gaz_detour_v1';
+	const FUEL_STORAGE_KEY = 'gaz_fuel_v1';
 	const MAX_RADIUS_KM = 25;
 	const MAX_DETOUR_KM = 2.5;
 	const DETOUR_STEP_KM = 0.25;
@@ -720,6 +771,7 @@
 			gpsBtnTitle: 'Utiliser le GPS',
 			destination: 'Destination',
 			enterDestination: 'Entrez votre destination',
+			fuelLabel: 'Type de carburant',
 			fuelRegular: 'Régulier',
 			fuelSuper: 'Super',
 			fuelDiesel: 'Diesel',
@@ -781,6 +833,7 @@
 			gpsBtnTitle: 'Use GPS',
 			destination: 'Destination',
 			enterDestination: 'Enter your destination',
+			fuelLabel: 'Fuel type',
 			fuelRegular: 'Regular',
 			fuelSuper: 'Super',
 			fuelDiesel: 'Diesel',
@@ -837,7 +890,8 @@
 	let originLat = null, originLon = null;
 	let destLat = null, destLon = null;
 	let stationsData = null, metadata = null;
-	let activeFuel = 'Régulier';
+	let activeFuel = localStorage.getItem(FUEL_STORAGE_KEY) || 'Régulier';
+	if (!['Régulier', 'Super', 'Diesel', 'Tous'].includes(activeFuel)) { activeFuel = 'Régulier'; }
 	let activeRadius = clamp(parseInt(localStorage.getItem(RADIUS_STORAGE_KEY), 10) || 5, 1, MAX_RADIUS_KM);
 	let activeDetour = clamp(parseFloat(localStorage.getItem(DETOUR_STORAGE_KEY)) || 0.5, MIN_DETOUR_KM, MAX_DETOUR_KM);
 	let gpsWatchId = null;
@@ -1453,14 +1507,12 @@
 		}
 	}
 
-	// ── Fuel tabs ──
-	document.querySelectorAll('.fuel-tab').forEach(btn => {
-		btn.addEventListener('click', () => {
-			document.querySelectorAll('.fuel-tab').forEach(b => b.classList.remove('active'));
-			btn.classList.add('active');
-			activeFuel = btn.dataset.fuel;
-			renderResults();
-		});
+	// ── Fuel select ──
+	$('fuelSelect').value = activeFuel;
+	$('fuelSelect').addEventListener('change', () => {
+		activeFuel = $('fuelSelect').value;
+		localStorage.setItem(FUEL_STORAGE_KEY, activeFuel);
+		renderResults();
 	});
 
 	$('sliderMain').addEventListener('input', () => {
@@ -1744,7 +1796,9 @@
 		const { feature, fav, outOfRange, priceData, subtitle } = c;
 		const props = feature.properties;
 		const [lon, lat] = feature.geometry.coordinates;
-		const brand = props.brand ? `<span class="brand-chip">${esc(props.brand)}</span>` : '';
+		const brand = props.brand && props.brand !== 'Aucun'
+			? `<span class="brand-chip" data-brand="${esc(props.brand)}">${esc(props.brand)}</span>`
+			: '';
 		const oor = outOfRange
 			? `<span class="badge oor">${t(mode === 'nearby' ? 'oorNearby' : 'oorTrip')}</span>`
 			: '';
@@ -1809,22 +1863,30 @@
 		$('originSub').textContent = t('useAddressSearch');
 	}
 
-	// ── Visitor counter (counterapi.dev, once per tab) ──
+	// ── Visitor counter (counterapi.dev) ──
+	// Note: the read-only endpoint returns 404, so we always hit /up.
+	// To avoid over-counting on quick reloads in the same tab, we throttle
+	// via sessionStorage (one hit per tab session) and show the cached number.
 	(async () => {
 		try {
-			const KEY = 'gaz_visit_counted_v1';
-			const countedThisSession = sessionStorage.getItem(KEY);
-			const endpoint = countedThisSession
-				? 'https://api.counterapi.dev/v1/gaz-prix-qc/visits'
-				: 'https://api.counterapi.dev/v1/gaz-prix-qc/visits/up';
-			const res = await fetch(endpoint);
-			if (!res.ok) { return; }
-			const data = await res.json();
-			if (typeof data.count !== 'number') { return; }
-			$('visitorCount').textContent = data.count.toLocaleString(
+			const COUNT_KEY = 'gaz_visit_count_v1';
+			const HIT_KEY = 'gaz_visit_hit_v1';
+			let count;
+			if (sessionStorage.getItem(HIT_KEY)) {
+				count = parseInt(sessionStorage.getItem(COUNT_KEY), 10);
+				if (!isFinite(count)) { return; }
+			} else {
+				const res = await fetch('https://api.counterapi.dev/v1/gaz-prix-qc/visits/up');
+				if (!res.ok) { return; }
+				const data = await res.json();
+				if (typeof data.count !== 'number') { return; }
+				count = data.count;
+				sessionStorage.setItem(HIT_KEY, '1');
+				sessionStorage.setItem(COUNT_KEY, String(count));
+			}
+			$('visitorCount').textContent = count.toLocaleString(
 				currentLang === 'fr' ? 'fr-CA' : 'en-CA');
 			$('appFooter').classList.remove('hidden');
-			sessionStorage.setItem(KEY, '1');
 		} catch (_) { /* silent: counter is non-essential */ }
 	})();
 })();

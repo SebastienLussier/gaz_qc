@@ -1256,7 +1256,7 @@
 	if (!['Régulier', 'Super', 'Diesel', 'Tous'].includes(activeFuel)) { activeFuel = 'Régulier'; }
 	let activeRadius = clamp(parseInt(localStorage.getItem(RADIUS_STORAGE_KEY), 10) || 5, 1, MAX_RADIUS_KM);
 	let activeDetour = clamp(parseFloat(localStorage.getItem(DETOUR_STORAGE_KEY)) || 0.5, MIN_DETOUR_KM, MAX_DETOUR_KM);
-	let estimateSavingsEnabled = localStorage.getItem(SAVINGS_ENABLED_KEY) === '1';
+	let estimateSavingsEnabled = localStorage.getItem(SAVINGS_ENABLED_KEY) !== '0';
 	let tankSizeL = clamp(parseFloat(localStorage.getItem(TANK_SIZE_KEY)) || 50, 1, 300);
 	let gpsWatchId = null;
 	let originFromGPS = false; // false once user manually picks an origin

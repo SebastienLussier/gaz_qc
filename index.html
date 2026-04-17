@@ -278,6 +278,14 @@
 			gap: 10px;
 		}
 
+		.menu-hint {
+			font-size: .72rem;
+			color: var(--gray-600);
+			line-height: 1.4;
+			margin-top: 6px;
+			padding: 0 2px;
+		}
+
 		.menu-subfield input[type="number"] {
 			width: 92px;
 			padding: 6px 10px;
@@ -935,6 +943,7 @@
 				<span data-i18n="estimateSavings">Estimer les économies</span>
 				<span class="toggle-switch" id="savingsSwitch"></span>
 			</label>
+			<p class="menu-hint" data-i18n="savingsHint">Écart entre le prix de cette station et la moyenne des autres stations affichées, pour un plein de réservoir.</p>
 			<div class="menu-subfield" id="tankSizeRow" hidden>
 				<label for="tankSizeInput" data-i18n="tankSize">Réservoir</label>
 				<div style="display:flex;align-items:center;gap:5px">
@@ -1095,6 +1104,7 @@
 			sectionTheme: 'Affichage',
 			sectionSavings: 'Économies',
 			estimateSavings: 'Estimer les économies',
+			savingsHint: 'Écart entre le prix de cette station et la moyenne des autres stations affichées, pour un plein de réservoir.',
 			tankSize: 'Réservoir',
 			fuelLabel: 'Type de carburant',
 			themeLabel: 'Thème',
@@ -1174,6 +1184,7 @@
 			sectionTheme: 'Display',
 			sectionSavings: 'Savings',
 			estimateSavings: 'Estimate savings',
+			savingsHint: 'Difference between this station\'s price and the average of other shown stations, for a full tank.',
 			tankSize: 'Tank size',
 			fuelLabel: 'Fuel type',
 			themeLabel: 'Theme',

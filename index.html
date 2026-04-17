@@ -294,7 +294,7 @@
 
 		/* ── Savings display on cards ── */
 		.price-col {
-			grid-column: 3;
+			grid-column: 4;
 			grid-row: 1 / 3;
 			display: flex;
 			flex-direction: column;
@@ -631,10 +631,10 @@
 
 		.station-card {
 			display: grid;
-			grid-template-columns: auto 1fr auto auto;
+			grid-template-columns: auto auto 1fr auto auto;
 			grid-template-rows: auto auto;
-			gap: 2px 10px;
-			padding: 12px 10px 12px 10px;
+			gap: 3px 10px;
+			padding: 10px 10px 10px 8px;
 			border-radius: 8px;
 			border: 1.5px solid var(--gray-200);
 			background: var(--card-bg);
@@ -684,45 +684,85 @@
 			background: var(--gold-light);
 		}
 
-		.station-name {
-			font-size: .88rem;
-			font-weight: 600;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+		.brand-badge {
 			grid-column: 2;
+			grid-row: 1 / 3;
+			align-self: center;
+			width: 48px;
+			height: 48px;
+			border-radius: 8px;
+			overflow: hidden;
+			flex-shrink: 0;
+			background: white;
+			box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+		}
+
+		.brand-badge img {
+			width: 100%;
+			height: 100%;
+			display: block;
+			object-fit: contain;
+		}
+
+		.brand-badge.is-text {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			font-size: 10px;
+			font-weight: 700;
+			padding: 3px;
+			line-height: 1.05;
+			background: var(--gray-200);
+			color: var(--gray-800);
+			word-break: break-word;
+			hyphens: auto;
+			letter-spacing: -.2px;
 		}
 
 		.station-price {
 			font-size: 1.25rem;
 			font-weight: 800;
 			color: var(--blue);
-			grid-column: 3;
+			grid-column: 4;
 			grid-row: 1 / 3;
 			align-self: center;
 			text-align: right;
 			letter-spacing: -.5px;
 		}
 
-		.station-meta {
-			font-size: .76rem;
-			color: var(--gray-600);
-			grid-column: 2;
-			min-width: 0;
-			overflow: hidden;
-			line-height: 1.35;
-		}
-
 		.meta-address,
 		.meta-info {
 			display: block;
+			grid-column: 3;
+			min-width: 0;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			font-size: .8rem;
+			line-height: 1.3;
+		}
+
+		.meta-address {
+			grid-row: 1;
+			align-self: end;
+			color: var(--gray-800);
+			font-weight: 500;
+		}
+
+		.meta-info {
+			grid-row: 2;
+			align-self: start;
+			color: var(--gray-600);
+			font-size: .72rem;
+		}
+
+		.meta-address .badge {
+			margin-left: 6px;
 		}
 
 		.dir-arrow {
-			grid-column: 4;
+			grid-column: 5;
 			grid-row: 1 / 3;
 			align-self: center;
 			color: var(--gray-400);
@@ -732,45 +772,22 @@
 
 		.station-card:hover .dir-arrow { color: var(--blue); }
 
-		.brand-chip {
-			display: inline-block;
-			background: var(--gray-200);
-			color: var(--gray-800);
-			border-radius: 4px;
-			padding: 1px 6px;
-			font-size: .7rem;
-			font-weight: 700;
-			margin-right: 4px;
-			vertical-align: middle;
-			letter-spacing: .2px;
-		}
+		/* (brand-chip removed — brand-badge replaces it) */
 
-		/* Brand colors — approximate from official branding */
-		.brand-chip[data-brand="Shell"] { background: #FFCB00; color: #DD1D21; }
-		.brand-chip[data-brand="Esso"] { background: #CE1126; color: #FFFFFF; }
-		.brand-chip[data-brand="Petro-Canada"] { background: #BF0A30; color: #FFDF00; }
-		.brand-chip[data-brand="Ultramar"] { background: #0075A8; color: #FFFFFF; }
-		.brand-chip[data-brand="Irving"] { background: #00853F; color: #FFDF00; }
-		.brand-chip[data-brand="Couche-Tard"] { background: #E30613; color: #FFFFFF; }
-		.brand-chip[data-brand="Sonic"] { background: #00448F; color: #FFFFFF; }
-		.brand-chip[data-brand="Crevier"] { background: #E30613; color: #FFFFFF; }
-		.brand-chip[data-brand="Mobil"] { background: #E3192E; color: #FFFFFF; }
-		.brand-chip[data-brand="Costco"] { background: #005DAA; color: #E31837; }
-		.brand-chip[data-brand="Canadian Tire"] { background: #ED1C24; color: #FFFFFF; }
-		.brand-chip[data-brand="Harnois"] { background: #F7941D; color: #FFFFFF; }
-		.brand-chip[data-brand="Quickie"] { background: #F7941D; color: #FFFFFF; }
-		.brand-chip[data-brand="Pétro-T"],
-		.brand-chip[data-brand="Petro-T"] { background: #1C2E4A; color: #FFFFFF; }
-		.brand-chip[data-brand="MacEwen"] { background: #E31837; color: #FFFFFF; }
-		.brand-chip[data-brand="Stinson"] { background: #003087; color: #FFFFFF; }
-		.brand-chip[data-brand="Pioneer"] { background: #E31837; color: #FFFFFF; }
-		.brand-chip[data-brand="Olco"] { background: #004B8D; color: #FFFFFF; }
-		.brand-chip[data-brand="Sunoco"] { background: #005EB8; color: #FFCC00; }
-		.brand-chip[data-brand="Beausoir"] { background: #1E4D8C; color: #FFFFFF; }
-		.brand-chip[data-brand="Eko"] { background: #003DA5; color: #FFED00; }
-		.brand-chip[data-brand="Paddock"] { background: #D52B1E; color: #FFFFFF; }
-		.brand-chip[data-brand="Nutrinor Énergies"] { background: #388E3C; color: #FFFFFF; }
-		.brand-chip[data-brand="Paquet"] { background: #B22222; color: #FFFFFF; }
+		/* Brand colors for text-fallback badges (used when no PNG icon exists) */
+		.brand-badge.is-text[data-brand="Stinson"] { background: #003087; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Beausoir"] { background: #1E4D8C; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Pétro-Québec"] { background: #095797; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="SDBJ"] { background: #2E7D32; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Le Relais"] { background: #B22222; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Gaz-O-Bar"] { background: #D52B1E; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Sergaz"] { background: #1976D2; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Petrol St-Félix"] { background: #4E342E; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Pétro Gaz"] { background: #00695C; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Francis"] { background: #5D4037; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="AMI"] { background: #6A1B9A; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Énergie DDF"] { background: #01579B; color: #FFFFFF; }
+		.brand-badge.is-text[data-brand="Les Huiles Berthier Inc"] { background: #BF360C; color: #FFFFFF; }
 
 		.badge {
 			font-size: .65rem;
@@ -797,7 +814,7 @@
 		.prices-row {
 			display: flex;
 			gap: 6px;
-			grid-column: 3;
+			grid-column: 4;
 			grid-row: 1 / 3;
 			align-items: center;
 		}
@@ -2233,13 +2250,54 @@
 			: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
 	}
 
+	// Brand → icon filename (in /icons/). Brands not in this map render a text-fallback badge.
+	const BRAND_ICONS = {
+		'Shell': 'shell',
+		'Esso': 'esso',
+		'Petro-Canada': 'petro-canada',
+		'Ultramar': 'ultramar',
+		'Harnois': 'harnois',
+		'Irving': 'irving',
+		'Sonic': 'sonic',
+		'Couche-Tard': 'couche-tard',
+		'Crevier': 'crevier',
+		'Canadian Tire': 'canadian-tire',
+		'Nutrinor Énergies': 'nutrinor',
+		'Costco': 'costco',
+		'Paquet': 'paquet',
+		'Eko': 'eko',
+		'Mobil': 'mobil',
+		'R.L.': 'rl',
+		'Petroplus': 'petroplus',
+		'Pétro-T': 'petro-t',
+		'Bélisle': 'belisle',
+		'Miraco': 'miraco',
+		'Super Gaz': 'super-gaz',
+		'Axco': 'axco',
+		'Sonerco': 'sonerco',
+		'Quickie': 'quickie',
+		'Intergaz': 'intergaz',
+		'Belzile': 'belzile',
+		'Pétroles Maurice': 'petroles-maurice',
+		'Petro Abitemis': 'petro-abitemis',
+		'Paddock': 'paddock',
+		'Pétronor inc.': 'petronor',
+		'MacEwen': 'macewen'
+	};
+
+	function brandBadge(brandName) {
+		const file = brandName ? BRAND_ICONS[brandName] : null;
+		if (file) {
+			return `<div class="brand-badge"><img src="icons/${file}.png" alt="${esc(brandName)}" loading="lazy"></div>`;
+		}
+		const display = brandName && brandName !== 'Aucun' ? brandName : '—';
+		return `<div class="brand-badge is-text" data-brand="${esc(brandName || '')}" title="${esc(display)}">${esc(display)}</div>`;
+	}
+
 	function cardHtml(c, isBest) {
 		const { feature, fav, outOfRange, priceData, subtitle } = c;
 		const props = feature.properties;
 		const [lon, lat] = feature.geometry.coordinates;
-		const brand = props.brand && props.brand !== 'Aucun'
-			? `<span class="brand-chip" data-brand="${esc(props.brand)}">${esc(props.brand)}</span>`
-			: '';
 		const oor = outOfRange
 			? `<span class="badge oor">${t(mode === 'nearby' ? 'oorNearby' : 'oorTrip')}</span>`
 			: '';
@@ -2288,12 +2346,10 @@
 
 		return `<a class="${classes.join(' ')}" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">
 			<span class="fav-btn${fav ? ' active' : ''}" role="button" aria-label="Favori" data-station-id="${sid}">${starIcon(fav)}</span>
-			<span class="station-name">${brand}${esc(props.Name)}${oor}</span>
+			${brandBadge(props.brand)}
+			<span class="meta-address">${esc(props.Address)}${oor}</span>
+			<span class="meta-info">${esc(subtitle)}</span>
 			${priceHtml}
-			<span class="station-meta">
-				<span class="meta-address">${esc(props.Address)}</span>
-				<span class="meta-info">${esc(subtitle)}</span>
-			</span>
 			<span class="dir-arrow">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
 			</span>

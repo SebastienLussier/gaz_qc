@@ -1130,7 +1130,7 @@
 			straightLine: 'vol d\'oiseau',
 			roadDistance: 'trajet routier',
 			updated: 'Mise à jour :',
-			detourPrefix: 'détour',
+			detourPrefix: 'Détour',
 			fromStart: 'du départ',
 			distanceUnknown: 'distance inconnue',
 			detourMaxLabel: 'détour ≤ {d} · trajet {m}',
@@ -1209,7 +1209,7 @@
 			straightLine: 'straight-line',
 			roadDistance: 'road distance',
 			updated: 'Updated:',
-			detourPrefix: 'detour',
+			detourPrefix: 'Detour',
 			fromStart: 'from start',
 			distanceUnknown: 'distance unknown',
 			detourMaxLabel: 'detour ≤ {d} · route {m}',
@@ -1352,6 +1352,19 @@
 		return String(str ?? '')
 			.replace(/&/g, '&amp;').replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	}
+
+	// Title-case all-caps tokens of 3+ chars (e.g. "MONTREAL" → "Montreal", "ROUYN-NORANDA" → "Rouyn-Noranda").
+	// Leaves shorter tokens untouched ("QC", "ST" stay).
+	function fixCaps(str) {
+		if (!str) { return str; }
+		return String(str).replace(/\b[A-ZÀ-Ÿ][A-ZÀ-Ÿ'-]*[A-ZÀ-Ÿ]\b/g, match => {
+			if (match.length < 3) { return match; }
+			return match.split(/([-'])/).map(part => {
+				if (part === '-' || part === "'" || !part) { return part; }
+				return part.charAt(0) + part.slice(1).toLowerCase();
+			}).join('');
+		});
 	}
 
 	// ── Favorites ──
@@ -2321,7 +2334,7 @@
 			let savingsHtml = '';
 			if (typeof c.savings === 'number' && isFinite(c.savings) && Math.abs(c.savings) >= 0.01) {
 				const dataSign = c.savings > 0 ? 'pos' : 'neg';
-				const prefix = c.savings > 0 ? '+' : '−';
+				const prefix = c.savings > 0 ? '' : '−';
 				savingsHtml = `<span class="station-savings" data-sign="${dataSign}">${prefix}${formatSavings(c.savings)}</span>`;
 			}
 			priceHtml = `<span class="price-col">
@@ -2347,7 +2360,7 @@
 		return `<a class="${classes.join(' ')}" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">
 			<span class="fav-btn${fav ? ' active' : ''}" role="button" aria-label="Favori" data-station-id="${sid}">${starIcon(fav)}</span>
 			${brandBadge(props.brand)}
-			<span class="meta-address">${esc(props.Address)}${oor}</span>
+			<span class="meta-address">${esc(fixCaps(props.Address))}${oor}</span>
 			<span class="meta-info">${esc(subtitle)}</span>
 			${priceHtml}
 			<span class="dir-arrow">

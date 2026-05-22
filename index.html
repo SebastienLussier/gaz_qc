@@ -300,6 +300,77 @@
 		}
 		.menu-subfield input[type="number"]:focus { border-color: var(--blue); }
 
+		/* ── Excluded stations list ── */
+		.excluded-empty {
+			font-size: .82rem;
+			color: var(--gray-600);
+			padding: 4px 2px;
+			line-height: 1.4;
+		}
+
+		.excluded-list {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.excluded-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 8px 10px;
+			border-radius: 8px;
+			border: 1.5px solid var(--gray-200);
+			background: var(--card-bg);
+		}
+
+		.excluded-info {
+			flex: 1;
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			line-height: 1.3;
+		}
+
+		.excluded-info strong {
+			font-size: .85rem;
+			font-weight: 600;
+			color: var(--gray-800);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.excluded-info small {
+			font-size: .72rem;
+			color: var(--gray-600);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.excluded-remove {
+			background: none;
+			border: 1.5px solid var(--gray-200);
+			border-radius: 6px;
+			padding: 5px 10px;
+			font-size: .75rem;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+			color: var(--blue);
+			transition: background .15s, border-color .15s;
+			flex-shrink: 0;
+		}
+
+		.excluded-remove:hover {
+			background: var(--blue-light);
+			border-color: var(--blue);
+		}
+
 		/* ── Savings display on cards ── */
 		.price-col {
 			grid-column: 4;
@@ -651,6 +722,7 @@
 			cursor: pointer;
 			transition: border-color .15s, transform .1s;
 			-webkit-tap-highlight-color: transparent;
+			-webkit-touch-callout: none;
 			position: relative;
 		}
 
@@ -671,7 +743,6 @@
 		.fav-btn {
 			grid-column: 1;
 			grid-row: 1 / 4;
-			margin-right: -4px;
 			align-self: center;
 			display: flex;
 			align-items: center;
@@ -696,6 +767,7 @@
 		.brand-badge {
 			grid-column: 2;
 			grid-row: 1 / 4;
+			margin-left: -10px;
 			align-self: center;
 			width: 48px;
 			height: 48px;
@@ -960,6 +1032,12 @@
 					<span>L</span>
 				</div>
 			</div>
+
+			<div class="menu-section">
+				<h3 data-i18n="sectionExcluded">Stations exclues</h3>
+				<p class="menu-hint" data-i18n="excludedHint">Appuyez longuement sur une station dans les résultats pour l'exclure. Les stations exclues n'apparaîtront plus dans les recherches.</p>
+				<ul class="excluded-list" id="excludedList"></ul>
+			</div>
 		</div>
 	</div>
 </aside>
@@ -1065,6 +1143,7 @@
 	const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
 	const GOOGLE_MAPS_KEY = 'AIzaSyCh_XhWbEtbEfCx6oe_MPInqNlrA0BBiGI';
 	const FAV_STORAGE_KEY = 'gaz_favorites_v1';
+	const EXCLUDED_STORAGE_KEY = 'gaz_excluded_v1';
 	const LANG_STORAGE_KEY = 'gaz_lang_v1';
 	const PLACES_STORAGE_KEY = 'gaz_places_v1';
 	const RADIUS_STORAGE_KEY = 'gaz_radius_v1';
@@ -1080,6 +1159,11 @@
 	const MAX_CANDIDATES = 100;
 	const MAX_RESULTS = 20;
 	const CACHE_THRESHOLD_KM = 0.1;
+
+	// Throttle GPS-driven recomputes to avoid burning Distance Matrix / Directions
+	// requests while driving: skip if moved < MIN_MOVE_KM AND elapsed < MIN_INTERVAL_MS.
+	const GPS_MIN_MOVE_KM = 0.25;
+	const GPS_MIN_INTERVAL_MS = 30_000;
 
 	// ── i18n ──
 	const i18n = {
@@ -1161,7 +1245,13 @@
 			savePlacePromptDest: 'Nom pour cette destination :',
 			confirmDeletePlace: 'Supprimer « {name} » ?',
 			noLocationSet: 'Définissez d\'abord une position.',
-			chipDeleteHint: 'Cliquer pour utiliser · Appuyer longuement pour supprimer'
+			chipDeleteHint: 'Cliquer pour utiliser · Appuyer longuement pour supprimer',
+			sectionExcluded: 'Stations exclues',
+			excludedHint: 'Appuyez longuement sur une station dans les résultats pour l\'exclure. Les stations exclues n\'apparaîtront plus dans les recherches.',
+			excludedEmpty: 'Aucune station exclue.',
+			excludedRemove: 'Réintégrer',
+			confirmExcludeStation: 'Exclure « {name} » des résultats ?',
+			stationCardTitle: 'Cliquer pour itinéraire · Appuyer longuement pour exclure'
 		},
 		en: {
 			appTitle: 'Gas prices QC',
@@ -1241,7 +1331,13 @@
 			savePlacePromptDest: 'Name for this destination:',
 			confirmDeletePlace: 'Delete "{name}"?',
 			noLocationSet: 'Set a location first.',
-			chipDeleteHint: 'Tap to use · Long-press to delete'
+			chipDeleteHint: 'Tap to use · Long-press to delete',
+			sectionExcluded: 'Excluded stations',
+			excludedHint: 'Long-press a station in the results to exclude it. Excluded stations no longer appear in searches.',
+			excludedEmpty: 'No excluded stations.',
+			excludedRemove: 'Restore',
+			confirmExcludeStation: 'Exclude "{name}" from results?',
+			stationCardTitle: 'Tap for directions · Long-press to exclude'
 		}
 	};
 
@@ -1270,6 +1366,9 @@
 	let gpsWatchId = null;
 	let originFromGPS = false; // false once user manually picks an origin
 	let nearbyCache = null;
+	let lastComputeLat = null;
+	let lastComputeLon = null;
+	let lastComputeAt = 0;
 	let tripCache = null;
 	let computingNearby = false;
 	let computingTrip = false;
@@ -1277,6 +1376,12 @@
 	let favorites = new Set();
 	try { favorites = new Set(JSON.parse(localStorage.getItem(FAV_STORAGE_KEY) || '[]')); }
 	catch (_) { favorites = new Set(); }
+	function saveFavorites() { localStorage.setItem(FAV_STORAGE_KEY, JSON.stringify([...favorites])); }
+
+	let excluded = new Set();
+	try { excluded = new Set(JSON.parse(localStorage.getItem(EXCLUDED_STORAGE_KEY) || '[]')); }
+	catch (_) { excluded = new Set(); }
+	function saveExcluded() { localStorage.setItem(EXCLUDED_STORAGE_KEY, JSON.stringify([...excluded])); }
 
 	// Saved places: [{id, name, lat, lon}]
 	let places = [];
@@ -1394,6 +1499,7 @@
 	}
 
 	function isFavorite(feature) { return favorites.has(stationId(feature)); }
+	function isExcluded(feature) { return excluded.has(stationId(feature)); }
 
 	// ── Status ──
 	const ICON_INFO = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
@@ -1614,6 +1720,19 @@
 		originLon = lon;
 		$('originLabel').textContent = label;
 		$('originSub').textContent = sub !== undefined ? sub : `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+
+		// Throttle GPS-driven recomputes; still keeps position label fresh above.
+		if (originFromGPS && lastComputeLat !== null) {
+			const moved = distanceKm(lat, lon, lastComputeLat, lastComputeLon);
+			const elapsed = Date.now() - lastComputeAt;
+			if (moved < GPS_MIN_MOVE_KM && elapsed < GPS_MIN_INTERVAL_MS) {
+				return;
+			}
+		}
+		lastComputeLat = lat;
+		lastComputeLon = lon;
+		lastComputeAt = Date.now();
+
 		await ensureStationsLoaded();
 		await triggerCompute();
 	}
@@ -1871,9 +1990,9 @@
 
 		// Slider: show for nearby/trip, hide for fav
 		if (mode === 'fav') {
-			$('sliderRow').classList.add('hidden');
+			$('controlsCard').classList.add('hidden');
 		} else {
-			$('sliderRow').classList.remove('hidden');
+			$('controlsCard').classList.remove('hidden');
 			const slider = $('sliderMain');
 			if (mode === 'trip') {
 				$('sliderLabel').textContent = t('detourLabel');
@@ -1930,9 +2049,70 @@
 		const id = star.dataset.stationId;
 		if (favorites.has(id)) { favorites.delete(id); }
 		else { favorites.add(id); }
-		localStorage.setItem(FAV_STORAGE_KEY, JSON.stringify([...favorites]));
+		saveFavorites();
 		renderResults();
 	});
+
+	// ── Long-press to exclude a station ──
+	(function attachStationLongPress() {
+		const container = $('resultsArea');
+		let timer = null;
+		let fired = false;
+
+		function clearTimer() {
+			if (timer) { clearTimeout(timer); timer = null; }
+		}
+
+		container.addEventListener('touchstart', e => {
+			const card = e.target.closest('.station-card');
+			if (!card) { return; }
+			if (e.target.closest('.fav-btn')) { return; } // star takes precedence
+			fired = false;
+			timer = setTimeout(() => {
+				fired = true;
+				tryExcludeFromCard(card);
+			}, 550);
+		}, { passive: true });
+
+		container.addEventListener('touchend', e => {
+			if (fired) { e.preventDefault(); }
+			clearTimer();
+		});
+		container.addEventListener('touchmove', clearTimer);
+		container.addEventListener('touchcancel', () => { clearTimer(); fired = false; });
+
+		// Block the navigation click if long-press fired
+		container.addEventListener('click', e => {
+			if (fired) {
+				e.preventDefault();
+				e.stopPropagation();
+				fired = false;
+			}
+		}, true);
+
+		// Desktop: right-click on a station card also exposes the exclude action
+		container.addEventListener('contextmenu', e => {
+			const card = e.target.closest('.station-card');
+			if (!card) { return; }
+			if (e.target.closest('.fav-btn')) { return; }
+			e.preventDefault();
+			tryExcludeFromCard(card);
+		});
+	})();
+
+	function tryExcludeFromCard(card) {
+		const id = card.dataset.stationId;
+		if (!id) { return; }
+		const brand = card.dataset.stationBrand || '';
+		const city = card.dataset.stationCity || '';
+		const display = [brand, city].filter(Boolean).join(' — ') || id;
+		if (!confirm(t('confirmExcludeStation', { name: display }))) { return; }
+		excluded.add(id);
+		if (favorites.delete(id)) { saveFavorites(); }
+		saveExcluded();
+		renderExcludedList();
+		renderResults();
+	}
 
 	// ── Theme segmented ──
 	const THEME_STORAGE_KEY = 'gaz_theme_v1';
@@ -2004,8 +2184,60 @@
 
 	syncSavingsUI();
 
+	// ── Excluded stations list (settings panel) ──
+	function renderExcludedList() {
+		const ul = $('excludedList');
+		if (!ul) { return; }
+		if (!excluded.size) {
+			ul.innerHTML = `<li class="excluded-empty">${esc(t('excludedEmpty'))}</li>`;
+			return;
+		}
+		// Build a quick lookup of station-id → feature so we can show brand/city
+		const byId = new Map();
+		if (stationsData) {
+			for (const f of stationsData) { byId.set(stationId(f), f); }
+		}
+		const removeLbl = esc(t('excludedRemove'));
+		const rows = [...excluded].map(id => {
+			const f = byId.get(id);
+			let title, sub;
+			if (f) {
+				const props = f.properties;
+				const addr = fixCaps(props.Address || '');
+				const lastComma = addr.lastIndexOf(',');
+				const city = lastComma >= 0 ? addr.slice(lastComma + 1).trim() : addr;
+				const street = lastComma >= 0 ? addr.slice(0, lastComma).trim() : '';
+				title = props.brand ? `${props.brand} — ${city}` : (city || id);
+				sub = street;
+			} else {
+				title = id;
+				sub = '';
+			}
+			return `<li class="excluded-row">
+				<div class="excluded-info">
+					<strong>${esc(title)}</strong>
+					${sub ? `<small>${esc(sub)}</small>` : ''}
+				</div>
+				<button class="excluded-remove" data-excluded-id="${esc(id)}">${removeLbl}</button>
+			</li>`;
+		}).join('');
+		ul.innerHTML = rows;
+	}
+
+	$('excludedList').addEventListener('click', e => {
+		const btn = e.target.closest('.excluded-remove');
+		if (!btn) { return; }
+		const id = btn.dataset.excludedId;
+		if (!id) { return; }
+		excluded.delete(id);
+		saveExcluded();
+		renderExcludedList();
+		renderResults();
+	});
+
 	// ── Hamburger menu ──
 	function openMenu() {
+		renderExcludedList();
 		$('menuPanel').classList.add('open');
 		$('menuBackdrop').classList.add('open');
 		$('menuPanel').setAttribute('aria-hidden', 'false');
@@ -2039,6 +2271,7 @@
 		applyModeUI();
 		if (typeof renderPlaces === 'function') { renderPlaces(); }
 		if (typeof applyTheme === 'function') { applyTheme(); }
+		if (typeof renderExcludedList === 'function') { renderExcludedList(); }
 		renderResults();
 	}
 
@@ -2170,6 +2403,7 @@
 		const radiusM = activeRadius * 1000;
 		const out = [];
 		for (const entry of cache.entries) {
+			if (isExcluded(entry.feature)) { continue; }
 			const distM = entry.roadM !== null ? entry.roadM : entry.straightKm * 1000;
 			const fav = isFavorite(entry.feature);
 			const outOfRange = distM > radiusM;
@@ -2196,6 +2430,7 @@
 		const maxOffM = activeDetour * 1000;
 		const out = [];
 		for (const entry of cache.entries) {
+			if (isExcluded(entry.feature)) { continue; }
 			const fav = isFavorite(entry.feature);
 			const outOfRange = entry.offRouteM > maxOffM;
 			if (outOfRange && !fav) { continue; }
@@ -2243,6 +2478,7 @@
 		const out = [];
 		for (const feature of stationsData) {
 			if (!isFavorite(feature)) { continue; }
+			if (isExcluded(feature)) { continue; }
 			const priceData = extractPriceData(feature);
 			const id = stationId(feature);
 			const dist = distMap.get(id);
@@ -2381,8 +2617,12 @@
 		if (isBest) { classes.push('is-best'); }
 		if (fav) { classes.push('is-fav'); }
 		const sid = stationId(feature);
+		const cardTitle = t('stationCardTitle');
+		const brandAttr = esc(props.brand || '');
+		const cityAttr = esc(city);
 
-		return `<a class="${classes.join(' ')}" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">
+		return `<a class="${classes.join(' ')}" href="${mapsUrl}" target="_blank" rel="noopener noreferrer"
+			data-station-id="${sid}" data-station-brand="${brandAttr}" data-station-city="${cityAttr}" title="${esc(cardTitle)}">
 			<span class="fav-btn${fav ? ' active' : ''}" role="button" aria-label="Favori" data-station-id="${sid}">${starIcon(fav)}</span>
 			${brandBadge(props.brand)}
 			<span class="meta-city">${esc(city)}${oor}</span>
